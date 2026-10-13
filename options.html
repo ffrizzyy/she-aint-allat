@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>she aint allat</title>
+<link rel="stylesheet" href="ui.css"></head>
+<body><main>
+<h1 data-i18n="title"></h1>
+
+<section><label><span data-i18n="h_lang"></span>
+<select id="lang"><option value="en">English</option><option value="id">Bahasa Indonesia</option></select></label></section>
+
+<section><h2 data-i18n="h_trig"></h2><p class="muted" data-i18n="trig_help"></p>
+<form id="tf"><div class="grid">
+<label><span data-i18n="value"></span><input id="tv" required maxlength="200" autocomplete="off"></label>
+<label><span data-i18n="kind"></span><select id="tk">
+<option value="name" data-i18n="k_name"></option><option value="nick" data-i18n="k_nick"></option><option value="handle" data-i18n="k_handle"></option>
+<option value="hashtag" data-i18n="k_hashtag"></option><option value="place" data-i18n="k_place"></option><option value="text" data-i18n="k_text"></option><option value="url" data-i18n="k_url"></option></select></label>
+<label><span data-i18n="sens"></span><select id="ts"><option value="strict" data-i18n="s_strict"></option><option value="normal" selected data-i18n="s_normal"></option><option value="loose" data-i18n="s_loose"></option></select></label>
+<label><span data-i18n="level"></span><select id="tl"><option value="0" data-i18n="l0"></option><option value="1" selected data-i18n="l1"></option><option value="2" data-i18n="l2"></option></select></label>
+</div><button class="primary" data-i18n="add"></button></form>
+<ul id="triggers"></ul></section>
+
+<section><h2 data-i18n="h_sites"></h2><p class="muted" data-i18n="sites_help"></p>
+<form id="sf"><label><span data-i18n="site"></span><input id="sv" required autocomplete="off"></label><button class="primary" data-i18n="grant"></button></form>
+<ul id="sites"></ul></section>
+
+<section><h2 data-i18n="h_pool"></h2><p class="muted" data-i18n="pool_help"></p>
+<form id="pf"><label><span data-i18n="text_item"></span><input id="pt" maxlength="500" autocomplete="off"></label><button class="primary" data-i18n="add_text"></button></form>
+<form id="pi"><label><span data-i18n="img_item"></span><input id="pfile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" required></label>
+<label><span data-i18n="alt"></span><input id="palt" required maxlength="300" autocomplete="off"></label><button class="primary" data-i18n="add_img"></button></form>
+<ul id="pool"></ul></section>
+
+<section><h2 data-i18n="h_data"></h2><p class="muted" id="count"></p>
+<div class="row"><button id="exp" data-i18n="export"></button><button id="imp" data-i18n="import"></button><button id="wipe" class="danger" data-i18n="del_all"></button></div>
+<input id="ifile" type="file" accept="application/json" hidden></section>
+
+<section id="support"><h2 data-i18n="h_support"></h2><p class="muted" data-i18n="sup_help"></p>
+<div class="row"><a class="btn" href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a>
+<a class="btn" href="https://www.befrienders.org" target="_blank" rel="noopener">befrienders.org</a></div></section>
+
+<p id="msg" role="status" aria-live="polite"></p>
+<p><small class="muted" data-i18n="disclaimer"></small></p>
+</main>
+<script src="i18n.js"></script><script src="rules.js"></script><script src="options.js"></script>
+</body></html>

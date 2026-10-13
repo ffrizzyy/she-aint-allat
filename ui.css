@@ -1,0 +1,26 @@
+:root{--bg:#EDF2F6;--surface:#fff;--surface-2:#F6F9FB;--fg:#16212C;--muted:#566878;--line:#CFD9E2;--accent:#C2410C;--accent-hover:#9A3412;--on-accent:#fff;--danger:#B42318;--r-control:12px;--r-surface:16px}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0E161E;--surface:#16212C;--surface-2:#1D2A37;--fg:#E9F0F6;--muted:#9AAEBF;--line:#2A3947;--accent:#FF8A4C;--accent-hover:#FFA06B;--on-accent:#1A0B02;--danger:#FF8A80}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:2.5rem;line-height:1.1;letter-spacing:-.025em;margin:0 0 32px;text-wrap:balance}
+h2{font-size:1.5rem;line-height:1.25;margin:0 0 8px}
+section{margin-bottom:40px}
+.muted,small{color:var(--muted)}
+label{display:grid;gap:4px;font-weight:600;font-size:.875rem;margin-bottom:12px}
+input,select,textarea{font:inherit;min-height:44px;padding:8px 12px;border:1px solid var(--line);border-radius:var(--r-control);background:var(--surface);color:var(--fg);width:100%}
+button,.btn{font:inherit;font-weight:600;min-height:44px;padding:0 16px;border-radius:var(--r-control);border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+button.primary:hover{background:var(--accent-hover)}
+button.danger{color:var(--danger);border-color:var(--danger)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+ul{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+li{display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-surface);padding:8px 8px 8px 16px}
+li img{max-height:56px;max-width:96px;border-radius:8px}
+li span{overflow-wrap:anywhere}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.grid{display:grid;gap:0 12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.tile{border-radius:var(--r-surface);padding:16px;margin:12px 0;text-align:center}
+.tile img{max-width:100%;border-radius:12px}
+#msg{min-height:1.5em;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}

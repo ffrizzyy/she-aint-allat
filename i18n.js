@@ -1,0 +1,52 @@
+// EN and ID strings (FR-19). Voice rules (7.8): warm, no shame, no em dash.
+(function () {
+  const D = {
+    en: {
+      pic: 'A picture you chose', back: 'Take me back', cont: 'Continue anyway', close: 'Close', wait: 'You can continue in {n}s',
+      label: 'A pause you set up for yourself', fallback: 'You set this pause up on purpose. Take one slow breath first.',
+      urge: "I'm about to look", looked: 'I looked anyway', looked_ok: 'Noted. No streaks, no scoreboard. Be kind to yourself.',
+      support: 'Need support?', settings: 'Settings', title: 'she aint allat',
+      h_lang: 'Language', h_trig: 'Your triggers', h_sites: 'Sites to watch', h_pool: 'Your pop-ups', h_data: 'Your data', h_support: 'Support',
+      trig_help: 'Words that should interrupt you. They stay on this device. Short names (under 5 letters) only match whole words.',
+      value: 'Word, handle or URL pattern', kind: 'Type', sens: 'Sensitivity', level: 'Intervention',
+      k_name: 'Name', k_nick: 'Nickname', k_handle: 'Handle', k_hashtag: 'Hashtag', k_place: 'Place', k_text: 'Free text', k_url: 'URL pattern (* allowed)',
+      s_strict: 'Strict', s_normal: 'Normal', s_loose: 'Loose', l0: 'Level 0: small nudge', l1: 'Level 1: blur and card', l2: 'Level 2: pause with timer',
+      add: 'Add', remove: 'Remove', empty: 'Nothing here yet.',
+      sites_help: 'The extension reads pages only on sites you add. It looks at the address, title, search boxes, visible text, image descriptions and links, in memory, and never stores page content.',
+      site: 'Site (example: instagram.com)', grant: 'Allow this site',
+      pool_help: 'What appears when a trigger fires: a line that calms you, a picture that makes you laugh, why it ended.',
+      text_item: 'A line', img_item: 'A picture', alt: 'Describe the picture (for screen readers)', add_text: 'Add line', add_img: 'Add picture',
+      too_big: 'That picture is still over 2 MB after shrinking. Try a smaller one.', pool_full: 'The pool is full (200 items). Remove one first.',
+      export: 'Export JSON', import: 'Import JSON', del_all: 'Delete everything', del_confirm: 'Delete all triggers, pop-ups, sites and logs on this device? This cannot be undone.',
+      bad_file: 'That file is not a valid export.', imported: 'Imported.',
+      sup_help: 'If things feel heavy, talk to someone. These directories list local helplines.',
+      disclaimer: 'This is a self-help tool, not therapy or medical care.',
+      locale_note: 'Detours logged:'
+    },
+    id: {
+      pic: 'Gambar yang kamu pilih', back: 'Bawa aku kembali', cont: 'Tetap lanjut', close: 'Tutup', wait: 'Kamu bisa lanjut dalam {n} dtk',
+      label: 'Jeda yang kamu siapkan sendiri', fallback: 'Kamu menyiapkan jeda ini dengan sengaja. Tarik napas pelan dulu.',
+      urge: 'Aku mau mengintip', looked: 'Aku tetap mengintip', looked_ok: 'Dicatat. Tanpa streak, tanpa papan skor. Berbaik hatilah pada dirimu.',
+      support: 'Butuh dukungan?', settings: 'Pengaturan', title: 'she aint allat',
+      h_lang: 'Bahasa', h_trig: 'Pemicu kamu', h_sites: 'Situs yang dipantau', h_pool: 'Pop-up kamu', h_data: 'Data kamu', h_support: 'Dukungan',
+      trig_help: 'Kata yang harus menghentikanmu. Tetap tersimpan di perangkat ini. Nama pendek (di bawah 5 huruf) hanya cocok sebagai kata utuh.',
+      value: 'Kata, handle, atau pola URL', kind: 'Jenis', sens: 'Kepekaan', level: 'Tingkat intervensi',
+      k_name: 'Nama', k_nick: 'Nama panggilan', k_handle: 'Handle', k_hashtag: 'Hashtag', k_place: 'Tempat', k_text: 'Teks bebas', k_url: 'Pola URL (boleh *)',
+      s_strict: 'Ketat', s_normal: 'Normal', s_loose: 'Longgar', l0: 'Tingkat 0: colekan kecil', l1: 'Tingkat 1: blur dan kartu', l2: 'Tingkat 2: jeda dengan timer',
+      add: 'Tambah', remove: 'Hapus', empty: 'Belum ada apa-apa.',
+      sites_help: 'Ekstensi hanya membaca halaman di situs yang kamu tambahkan. Ia melihat alamat, judul, kotak pencarian, teks yang tampak, deskripsi gambar dan tautan, di memori saja, dan tidak pernah menyimpan isi halaman.',
+      site: 'Situs (contoh: instagram.com)', grant: 'Izinkan situs ini',
+      pool_help: 'Yang muncul saat pemicu aktif: kalimat yang menenangkan, gambar yang bikin tertawa, alasan kenapa berakhir.',
+      text_item: 'Satu kalimat', img_item: 'Satu gambar', alt: 'Jelaskan gambarnya (untuk pembaca layar)', add_text: 'Tambah kalimat', add_img: 'Tambah gambar',
+      too_big: 'Gambar itu masih di atas 2 MB setelah dikecilkan. Coba yang lebih kecil.', pool_full: 'Kumpulan penuh (200 item). Hapus satu dulu.',
+      export: 'Ekspor JSON', import: 'Impor JSON', del_all: 'Hapus semuanya', del_confirm: 'Hapus semua pemicu, pop-up, situs dan catatan di perangkat ini? Tidak bisa dibatalkan.',
+      bad_file: 'Berkas itu bukan hasil ekspor yang valid.', imported: 'Berhasil diimpor.',
+      sup_help: 'Kalau terasa berat, bicaralah dengan seseorang. Direktori ini memuat layanan bantuan setempat.',
+      disclaimer: 'Ini alat bantu mandiri, bukan terapi atau perawatan medis.',
+      locale_note: 'Pengalihan tercatat:'
+    }
+  };
+  const S = (globalThis.SAA = globalThis.SAA || {});
+  S.lang = (navigator.language || 'en').toLowerCase().startsWith('id') ? 'id' : 'en';
+  S.t = (k, v) => (D[S.lang][k] ?? D.en[k] ?? k).replace('{n}', v ?? '');
+})();
