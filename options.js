@@ -4,15 +4,20 @@ const get = async (k, d) => (await chrome.storage.local.get(k))[k] ?? d;
 const set = (o) => chrome.storage.local.set(o);
 const say = (k) => ($('msg').textContent = t(k));
 const FILES = ['matcher.js', 'i18n.js', 'content.js'];
-const { clean } = SAA.rules;
+const { clean, removalState, canRemoveNow, DELAY } = SAA.rules;
 const origins = (h) => [`*://${h}/*`, `*://*.${h}/*`];
 const apply = () => document.querySelectorAll('[data-i18n]').forEach((e) => (e.textContent = t(e.dataset.i18n)));
 
-function li(content, onRemove, label) {
-  const b = Object.assign(document.createElement('button'), { textContent: t('remove'), onclick: onRemove });
-  b.setAttribute('aria-label', `${t('remove')}: ${label}`.slice(0, 80));
+function li(content, actions, label) {
+  const row = document.createElement('div');
+  row.className = 'row';
+  for (const [key, fn] of actions) {
+    const b = Object.assign(document.createElement('button'), { textContent: t(key), onclick: fn });
+    b.setAttribute('aria-label', `${t(key)}: ${label}`.slice(0, 80));
+    row.append(b);
+  }
   const e = document.createElement('li');
-  e.append(content, b);
+  e.append(content, row);
   return e;
 }
 const span = (s, small) => {
@@ -29,23 +34,30 @@ async function render() {
   $('lang').value = SAA.lang = s || SAA.lang;
   apply();
   const triggers = await get('triggers', []), pool = await get('pool', []);
-  fill($('triggers'), triggers.map((x) => li(span(x.value, `${t('k_' + x.kind)}, ${t('s_' + x.sensitivity)}, ${t('l' + x.level)}`), async () => {
-    await set({ triggers: (await get('triggers', [])).filter((y) => y.id !== x.id) });
-    render();
-  }, x.value)));
+  fill($('triggers'), triggers.map((x) => {
+    const now = Date.now(), st = removalState(x, now);
+    const note = st === 'pending' ? t('rm_pending', Math.ceil((x.removeRequestedAt + DELAY - now) / 3.6e6)) : st === 'confirm' ? t('rm_confirm') : '';
+    const save = async (fn) => { await set({ triggers: fn(await get('triggers', [])) }); render(); };
+    const drop = () => save((all) => all.filter((y) => y.id !== x.id));
+    const schedule = () => { say('rm_note'); return save((all) => all.map((y) => (y.id === x.id ? { ...y, removeRequestedAt: Date.now() } : y))); };
+    const keep = () => save((all) => all.map((y) => { if (y.id !== x.id) return y; const { removeRequestedAt, ...rest } = y; return rest; }));
+    // FR-08: removal waits 24 h and is confirmed once more. A trigger added in the last 15 minutes can go at once.
+    const actions = st === 'active' ? [['remove', canRemoveNow(x, now) ? drop : schedule]] : st === 'pending' ? [['keep', keep]] : [['rm_final', drop], ['keep', keep]];
+    return li(span(x.value, `${t('k_' + x.kind)}, ${t('s_' + x.sensitivity)}, ${t('l' + x.level)}${note ? ', ' + note : ''}`), actions, x.value);
+  }));
   fill($('pool'), pool.map((x) => {
     let c;
     if (x.type === 'image') { c = document.createElement('img'); c.src = x.value; c.alt = x.altText || t('pic'); } else c = span(x.value);
-    return li(c, async () => { await set({ pool: (await get('pool', [])).filter((y) => y.id !== x.id) }); render(); }, x.type === 'image' ? x.altText || t('pic') : x.value);
+    return li(c, [['remove', async () => { await set({ pool: (await get('pool', [])).filter((y) => y.id !== x.id) }); render(); }]], x.type === 'image' ? x.altText || t('pic') : x.value);
   }));
   const scripts = (await chrome.scripting.getRegisteredContentScripts()).filter((x) => x.id.startsWith('saa-'));
   fill($('sites'), scripts.map((x) => {
     const h = x.id.slice(4);
-    return li(span(h), async () => {
+    return li(span(h), [['remove', async () => {
       await chrome.scripting.unregisterContentScripts({ ids: [x.id] });
       await chrome.permissions.remove({ origins: origins(h) });
       render();
-    }, h);
+    }]], h);
   }));
   $('count').textContent = `${t('locale_note')} ${(await get('events', [])).length}`;
 }

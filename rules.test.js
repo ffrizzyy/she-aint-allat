@@ -1,6 +1,6 @@
 // Run: node rules.test.js
 const assert = require('node:assert');
-const { level, clean } = require('./rules.js');
+const { level, clean, removalState, canRemoveNow, DELAY, GRACE } = require('./rules.js');
 
 // Ladder
 const now = 1e9, min = 60e3;
@@ -39,4 +39,15 @@ assert.equal(c.events[0].domain.length, 253);
 assert.equal(c.events.length, 3);
 assert.equal(clean({ ...ok, settings: { locale: 'fr' } }).locale, 'en');
 assert.equal(clean({ ...ok, settings: { locale: 'id' } }).locale, 'id');
+// FR-08: commitment device
+const h = 3600e3;
+assert.equal(removalState({}, now), 'active');
+assert.equal(removalState({ removeRequestedAt: now - h }, now), 'pending');
+assert.equal(removalState({ removeRequestedAt: now - DELAY + 1 }, now), 'pending', 'still active just before 24 h');
+assert.equal(removalState({ removeRequestedAt: now - DELAY }, now), 'confirm', 'asked once more at 24 h');
+assert.equal(canRemoveNow({ createdAt: now - 5 * min }, now), true, 'added by mistake');
+assert.equal(canRemoveNow({ createdAt: now - GRACE }, now), false);
+assert.equal(canRemoveNow({}, now), false, 'unknown age is not a free pass');
+assert.equal(clean({ ...ok, triggers: [{ value: 'a', removeRequestedAt: 123456 }] }).triggers[0].removeRequestedAt, 123456);
+assert.equal('removeRequestedAt' in clean({ ...ok, triggers: [{ value: 'a', removeRequestedAt: 'nope' }] }).triggers[0], false);
 console.log('rules ok');

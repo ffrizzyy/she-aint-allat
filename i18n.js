@@ -21,6 +21,10 @@
       bad_file: 'That file is not a valid export.', imported: 'Imported.',
       sup_help: 'If things feel heavy, talk to someone. These directories list local helplines.',
       disclaimer: 'This is a self-help tool, not therapy or medical care.',
+      why: 'Why did this fire?', why_text: 'Matched "{n}" in {s}.', sig_url: 'the page address', sig_title: 'the page title', sig_search: 'a search box',
+      sig_text: 'text on the page', sig_attr: 'an image description or label', sig_link: 'a link on the page', sig_img: 'an image file name',
+      rm_pending: 'Removal pending, still active for {n}h', rm_confirm: 'Ready to remove. Remove for good?', keep: 'Keep it', rm_final: 'Remove for good',
+      rm_note: 'Removal is scheduled. It stays active for 24 hours.',
       locale_note: 'Detours logged:'
     },
     id: {
@@ -43,10 +47,14 @@
       bad_file: 'Berkas itu bukan hasil ekspor yang valid.', imported: 'Berhasil diimpor.',
       sup_help: 'Kalau terasa berat, bicaralah dengan seseorang. Direktori ini memuat layanan bantuan setempat.',
       disclaimer: 'Ini alat bantu mandiri, bukan terapi atau perawatan medis.',
+      why: 'Kenapa ini muncul?', why_text: 'Cocok dengan "{n}" di {s}.', sig_url: 'alamat halaman', sig_title: 'judul halaman', sig_search: 'kotak pencarian',
+      sig_text: 'teks di halaman', sig_attr: 'deskripsi atau label gambar', sig_link: 'tautan di halaman', sig_img: 'nama berkas gambar',
+      rm_pending: 'Penghapusan tertunda, masih aktif {n} jam lagi', rm_confirm: 'Siap dihapus. Hapus permanen?', keep: 'Pertahankan', rm_final: 'Hapus permanen',
+      rm_note: 'Penghapusan dijadwalkan. Pemicu tetap aktif selama 24 jam.',
       locale_note: 'Pengalihan tercatat:'
     }
   };
   const S = (globalThis.SAA = globalThis.SAA || {});
   S.lang = (navigator.language || 'en').toLowerCase().startsWith('id') ? 'id' : 'en';
-  S.t = (k, v) => (D[S.lang][k] ?? D.en[k] ?? k).replace('{n}', v ?? '');
+  S.t = (k, v, w) => (D[S.lang][k] ?? D.en[k] ?? k).replace('{n}', v ?? '').replace('{s}', w ?? '');
 })();

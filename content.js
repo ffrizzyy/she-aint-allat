@@ -14,7 +14,8 @@
   const SKIP = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE']);
   const ATTRS = ['alt', 'title', 'aria-label', 'href', 'src'];
   const quiet = new Map(); // triggerId -> ms until quiet (10 min after continue)
-  let m = M.build([]), seen = new WeakSet(), active = false, hostEl = null;
+  let m = M.build([]), seen = new WeakSet(), active = false, hostEl = null, rootEl = null, vt = 0, trigs = new Map();
+  const FULL = 'all:initial;position:fixed;inset:0;z-index:2147483647';
 
   const send = (msg) => chrome.runtime.sendMessage(msg).catch(() => {});
   const fail = () => send({ type: 'badge', state: 'err' }); // fail open: never break the page
@@ -24,41 +25,62 @@
   async function load() {
     const s = await chrome.storage.local.get(['triggers', 'settings']);
     m = M.build(s.triggers || []);
+    trigs = new Map((s.triggers || []).map((x) => [x.id, x]));
     if (s.settings && s.settings.locale) SAA.lang = s.settings.locale;
     seen = new WeakSet();
   }
 
-  function check(id) {
+  // FR-06: blur at once, before the background round trip. Fails open after 1.5 s so the page is never trapped.
+  function veil() {
+    const host = (hostEl = document.createElement('div'));
+    host.style.cssText = FULL;
+    rootEl = host.attachShadow({ mode: 'closed' });
+    rootEl.adoptedStyleSheets = [sheet];
+    rootEl.append(el('div', { className: 'wrap lv1' }));
+    document.documentElement.append(host);
+    vt = setTimeout(() => { unveil(); fail(); }, 1500);
+  }
+  function unveil() {
+    clearTimeout(vt);
+    if (hostEl) hostEl.remove();
+    hostEl = rootEl = null;
+    active = false;
+  }
+
+  // signal: url | title | search | text | attr | link | img. Only the signal name is kept, never page content (FR-22).
+  function check(id, signal) {
     if (!id || active || (quiet.get(id) || 0) > Date.now()) return;
     active = true;
+    if ((trigs.get(id) || {}).level !== 0) veil();
     chrome.runtime.sendMessage({ type: 'hit', triggerId: id, domain: location.hostname })
-      .then((r) => (r && !r.error ? show(id, r) : (active = false)))
-      .catch(() => (active = false));
+      .then((r) => (r && !r.error ? show(id, r, signal) : unveil()))
+      .catch(unveil);
   }
 
   // S1, S2: URL and title
   const scanMeta = guard(() => {
     const u = location.href;
-    check(M.scanUrl(m, u) || M.scan(m, dec(u), { compact: true }) || M.scan(m, document.title, { compact: true }));
+    check(M.scanUrl(m, u) || M.scan(m, dec(u), { compact: true }), 'url');
+    check(M.scan(m, document.title, { compact: true }), 'title');
   });
 
   // S4 to S6: text, attributes, links
   const text = guard((n) => {
     if (seen.has(n) || n.data.length < 2) return;
     seen.add(n);
-    check(M.scan(m, n.data.slice(0, 20000)));
+    check(M.scan(m, n.data.slice(0, 20000)), n.parentNode && n.parentNode.nodeName === 'TITLE' ? 'title' : 'text');
   });
   const attrs = guard((el) => {
     if (seen.has(el)) return;
     seen.add(el);
     for (const a of ['alt', 'title', 'aria-label']) {
       const v = el.getAttribute(a);
-      if (v) check(M.scan(m, v, { compact: true }));
+      if (v) check(M.scan(m, v, { compact: true }), 'attr');
     }
     if (el.tagName === 'IMG' && el.getAttribute('src')) {
-      try { check(M.scan(m, dec(new URL(el.src).pathname.split('/').pop()), { compact: true })); } catch { /* bad src */ }
+      try { check(M.scan(m, dec(new URL(el.src).pathname.split('/').pop()), { compact: true }), 'img'); } catch { /* bad src */ }
     }
-    if (el.tagName === 'A' && el.getAttribute('href')) check(M.scanUrl(m, el.href) || M.scan(m, dec(el.href), { compact: true }));
+    if (el.tagName === 'A' && el.getAttribute('href')) check(M.scanUrl(m, el.href) || M.scan(m, dec(el.href), { compact: true }), 'link');
   });
 
   // Idle-slice queue: <= 200 nodes per slice, remainder deferred (6.4).
@@ -120,7 +142,7 @@
   document.addEventListener('input', (e) => {
     if (!isSearch(e.target)) return;
     clearTimeout(deb);
-    deb = setTimeout(guard(() => check(M.scan(m, e.target.value, { compact: true }))), 150);
+    deb = setTimeout(guard(() => check(M.scan(m, e.target.value, { compact: true }), 'search')), 150);
   }, true);
 
   chrome.runtime.onMessage.addListener((msg) => { if (msg.type === 'url') scanMeta(); }); // SPA navigation
@@ -147,6 +169,8 @@
   button.primary{background:var(--accent);border-color:var(--accent);color:var(--on)}
   button:disabled{opacity:.5;cursor:not-allowed}
   button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  button.link{display:block;flex:none;margin:8px auto 0;border:0;text-decoration:underline;color:var(--muted)}
+  .why{margin:8px 0 0;color:var(--muted);font-size:.875rem;text-align:center;overflow-wrap:anywhere}
   @keyframes in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
   @keyframes fade{from{opacity:0}to{opacity:1}}
   @media (prefers-reduced-motion:reduce){.card{animation:fade 120ms linear}}`;
@@ -160,12 +184,17 @@
     return e;
   }
 
-  function show(id, { eventId, level, item }) {
+  function show(id, { eventId, level, item }, signal) {
     const prev = document.activeElement;
-    const host = (hostEl = document.createElement('div'));
-    host.style.cssText = level === 0 ? 'all:initial;position:fixed;right:16px;bottom:16px;z-index:2147483647' : 'all:initial;position:fixed;inset:0;z-index:2147483647';
-    const root = host.attachShadow({ mode: 'closed' });
-    root.adoptedStyleSheets = [sheet];
+    clearTimeout(vt);
+    if (!hostEl) { // no veil (level 0, or escalated from 0): build the host now
+      hostEl = document.createElement('div');
+      rootEl = hostEl.attachShadow({ mode: 'closed' });
+      rootEl.adoptedStyleSheets = [sheet];
+    }
+    const host = hostEl, root = rootEl;
+    host.style.cssText = level === 0 ? 'all:initial;position:fixed;right:16px;bottom:16px;z-index:2147483647' : FULL;
+    root.replaceChildren(); // drops the veil, same host so there is no flicker
 
     const [bg, ink] = PASTEL[Math.floor(Math.random() * PASTEL.length)];
     const tile = el('div', { className: 'tile' });
@@ -179,7 +208,17 @@
     const cont = level === 0 ? null : el('button', { textContent: t('cont'), disabled: level === 2 });
     const timer = level === 2 ? el('p', { className: 'timer', textContent: t('wait', left) }) : null;
     timer && timer.setAttribute('aria-hidden', 'true');
-    const card = el('div', { className: 'card' }, tile, ...(timer ? [timer] : []), el('div', { className: 'row' }, back, ...(cont ? [cont] : [])));
+    // FR-22: names the trigger and the signal, never the page content.
+    const why = el('button', { className: 'link', textContent: t('why') });
+    const whyText = el('p', { className: 'why' });
+    why.setAttribute('aria-expanded', 'false');
+    whyText.setAttribute('role', 'status');
+    why.onclick = () => {
+      const open = why.getAttribute('aria-expanded') === 'true';
+      why.setAttribute('aria-expanded', String(!open));
+      whyText.textContent = open ? '' : t('why_text', (trigs.get(id) || {}).value || '', t('sig_' + signal));
+    };
+    const card = el('div', { className: 'card' }, tile, ...(timer ? [timer] : []), el('div', { className: 'row' }, back, ...(cont ? [cont] : [])), ...(level > 0 ? [why, whyText] : []));
     const wrap = el('div', { className: 'wrap lv' + level }, card);
     wrap.setAttribute('role', level === 0 ? 'status' : 'alertdialog');
     wrap.setAttribute('aria-label', t('label'));
@@ -192,7 +231,7 @@
       clearInterval(tick); clearTimeout(auto);
       removeEventListener('keydown', onKey, true);
       document.removeEventListener('focusin', trap, true);
-      host.remove(); hostEl = null; active = false;
+      host.remove(); hostEl = rootEl = null; active = false;
       if (prev && prev.focus) prev.focus();
       send({ type: 'resp', eventId, response });
       if (response !== 'went_back') quiet.set(id, Date.now() + 10 * 60e3);
@@ -216,7 +255,7 @@
       }, 1000);
     }
 
-    document.documentElement.append(host);
+    if (!host.isConnected) document.documentElement.append(host);
     if (level > 0) { document.addEventListener('focusin', trap, true); back.focus(); }
   }
 

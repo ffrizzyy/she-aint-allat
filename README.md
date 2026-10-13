@@ -18,6 +18,10 @@ You keep a list of triggers: a name, nickname, handle, hashtag, place, or a link
 
 The same trigger firing 3 times in 30 minutes moves up one level, never above 2.
 
+On levels 1 and 2 the page blurs the moment a match is found, before the card loads. "Why did this fire?" on the card names the trigger and where it matched (address, title, search box, page text, a link), never the page content.
+
+**Removing a trigger takes 24 hours.** It stays active, then asks you to confirm once more. This is a commitment device so a 1 a.m. decision cannot undo your own list. A trigger added by mistake can be removed at once within 15 minutes.
+
 ## Install (developer mode)
 
 Needs Chrome, Edge or Brave 120 or newer.
@@ -62,7 +66,7 @@ node matcher.test.js && node rules.test.js
 
 ## Status
 
-M1 (walking skeleton). Not on any extension store yet.
+M1 plus pre-emptive blur, "Why did this fire?" and delayed removal. Not on any extension store yet.
 
 ## License
 
