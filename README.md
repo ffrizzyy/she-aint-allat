@@ -35,6 +35,10 @@ Needs Chrome, Edge or Brave 120 or newer.
 
 The toolbar popup opens an Insights page: detours per day, when urges show up by hour and weekday, which sites they come from, and a one line comparison with last week. Wording is kind and never counts slips against you. Everything is a table you can read with a screen reader, and you can export a CSV.
 
+## Unsent letters
+
+Write what you want to say without sending it. Lock a letter for 1, 3, 7 or 30 days and it stays hidden from you until then. You can shred a letter at any time, locked or open. Locking hides the text from you in the app. It is not encryption, so anyone with access to your browser profile could still read it.
+
 ## Privacy
 
 - Matching happens in memory on your device. Page content, URLs and search text are never stored.
@@ -63,6 +67,7 @@ node matcher.test.js && node rules.test.js && node stats.test.js
 |---|---|
 | `matcher.js` | Text normalising and trigger matching, no DOM |
 | `rules.js` | Escalation ladder and import validation, no DOM |
+| `letters.*` | Unsent letters page |
 | `stats.js` | Insights numbers and CSV export, no DOM |
 | `content.js` | Watches the page, draws the overlay |
 | `background.js` | Picks pool items, writes the event log |
@@ -71,7 +76,7 @@ node matcher.test.js && node rules.test.js && node stats.test.js
 
 ## Status
 
-M1 plus pre-emptive blur, "Why did this fire?", delayed removal and Insights. Not on any extension store yet.
+M1 plus pre-emptive blur, "Why did this fire?", delayed removal, Insights and unsent letters. Not on any extension store yet.
 
 ## License
 

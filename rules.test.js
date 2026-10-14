@@ -1,6 +1,6 @@
 // Run: node rules.test.js
 const assert = require('node:assert');
-const { level, clean, removalState, canRemoveNow, DELAY, GRACE } = require('./rules.js');
+const { level, clean, removalState, canRemoveNow, letterState, DELAYS, LETTER_MAX, LETTERS_CAP, DELAY, GRACE } = require('./rules.js');
 
 // Ladder
 const now = 1e9, min = 60e3;
@@ -50,4 +50,20 @@ assert.equal(canRemoveNow({ createdAt: now - GRACE }, now), false);
 assert.equal(canRemoveNow({}, now), false, 'unknown age is not a free pass');
 assert.equal(clean({ ...ok, triggers: [{ value: 'a', removeRequestedAt: 123456 }] }).triggers[0].removeRequestedAt, 123456);
 assert.equal('removeRequestedAt' in clean({ ...ok, triggers: [{ value: 'a', removeRequestedAt: 'nope' }] }).triggers[0], false);
+// FR-12: letters
+assert.equal(letterState({ unlockAt: now + 1 }, now), 'locked');
+assert.equal(letterState({ unlockAt: now }, now), 'open');
+assert.deepEqual(Object.keys(DELAYS), ['1', '3', '7', '30']);
+c = clean({ ...ok, letters: [
+  { body: 'dear you', unlockAt: now + 1 },
+  { body: '   ', unlockAt: now + 1 },
+  { body: 'no date' },
+  { body: 'bad date', unlockAt: 'soon' },
+  { body: 5, unlockAt: now },
+  null,
+  { body: 'x'.repeat(LETTER_MAX + 500), unlockAt: now }] });
+assert.equal(c.letters.length, 2);
+assert.equal(c.letters[1].body.length, LETTER_MAX);
+assert.equal(clean({ ...ok, letters: Array.from({ length: 99 }, () => ({ body: 'a', unlockAt: now })) }).letters.length, LETTERS_CAP);
+assert.deepEqual(clean(ok).letters, []);
 console.log('rules ok');

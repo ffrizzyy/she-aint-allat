@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>she aint allat</title>
+<link rel="stylesheet" href="ui.css">
+<style>textarea{min-height:200px;resize:vertical}.letter{white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0 0}li{align-items:flex-start}li>div:first-child{flex:1;min-width:0}summary{cursor:pointer;font-weight:600;min-height:44px;display:flex;align-items:center}</style></head>
+<body><main>
+<h1 data-i18n="letters"></h1>
+<p class="muted" data-i18n="let_help"></p>
+<form id="lf">
+<label><span data-i18n="let_body"></span><textarea id="body" required maxlength="20000"></textarea></label>
+<label><span data-i18n="let_delay"></span><select id="delay"><option value="1" data-i18n="d_1"></option><option value="3" data-i18n="d_3"></option><option value="7" selected data-i18n="d_7"></option><option value="30" data-i18n="d_30"></option></select></label>
+<button class="primary" data-i18n="let_lock"></button>
+</form>
+<p id="msg" role="status" aria-live="polite"></p>
+<ul id="list"></ul>
+<p><a href="options.html" data-i18n="settings"></a></p>
+<p><small class="muted" data-i18n="disclaimer"></small></p>
+</main>
+<script src="i18n.js"></script><script src="rules.js"></script><script src="letters.js"></script>
+</body></html>

@@ -29,6 +29,10 @@
       ins_heat: 'When urges show up (hour by weekday)', ins_domains: 'Where they show up', ins_trend: 'This week', ins_csv: 'Export CSV',
       tr_quiet: 'Quieter than last week.', tr_same: 'About the same as last week.', tr_busy: 'A busier week than the last. That happens, and it is okay.', tr_none: 'Not enough yet to compare.',
       ins_note: 'A detour is a pause you chose. Looking anyway is never counted against you.', col_day: 'Day', col_n: 'Detours', col_site: 'Site', col_urges: 'Urges',
+      letters: 'Unsent letters', let_help: 'Write what you want to say. You do not have to send it. A locked letter stays hidden from you until the date you pick.',
+      let_body: 'Your letter', let_delay: 'Hide it for', d_1: '1 day', d_3: '3 days', d_7: '7 days', d_30: '30 days', let_lock: 'Lock this letter',
+      let_locked: 'Locked until {n}', let_open: 'Ready to read. It opened on {n}.', let_read: 'Read it', let_shred: 'Shred', let_from: 'Letter from {n}',
+      let_shred_confirm: 'Shred this letter for good? This cannot be undone.', let_empty: 'No letters yet.', let_saved: 'Locked. It will open on {n}.', let_full: 'You have 50 letters. Shred one first.',
       locale_note: 'Detours logged:'
     },
     id: {
@@ -59,6 +63,10 @@
       ins_heat: 'Kapan dorongan muncul (jam menurut hari)', ins_domains: 'Di mana muncul', ins_trend: 'Minggu ini', ins_csv: 'Ekspor CSV',
       tr_quiet: 'Lebih tenang dari minggu lalu.', tr_same: 'Hampir sama dengan minggu lalu.', tr_busy: 'Minggu yang lebih ramai dari sebelumnya. Itu wajar, dan tidak apa-apa.', tr_none: 'Belum cukup untuk dibandingkan.',
       ins_note: 'Pengalihan adalah jeda yang kamu pilih. Tetap mengintip tidak pernah dihitung sebagai kesalahan.', col_day: 'Hari', col_n: 'Pengalihan', col_site: 'Situs', col_urges: 'Dorongan',
+      letters: 'Surat tak terkirim', let_help: 'Tulis apa yang ingin kamu katakan. Kamu tidak harus mengirimnya. Surat yang dikunci tersembunyi darimu sampai tanggal yang kamu pilih.',
+      let_body: 'Suratmu', let_delay: 'Sembunyikan selama', d_1: '1 hari', d_3: '3 hari', d_7: '7 hari', d_30: '30 hari', let_lock: 'Kunci surat ini',
+      let_locked: 'Terkunci sampai {n}', let_open: 'Siap dibaca. Terbuka pada {n}.', let_read: 'Baca', let_shred: 'Hancurkan', let_from: 'Surat tanggal {n}',
+      let_shred_confirm: 'Hancurkan surat ini selamanya? Tidak bisa dibatalkan.', let_empty: 'Belum ada surat.', let_saved: 'Terkunci. Akan terbuka pada {n}.', let_full: 'Kamu punya 50 surat. Hancurkan satu dulu.',
       locale_note: 'Pengalihan tercatat:'
     }
   };
