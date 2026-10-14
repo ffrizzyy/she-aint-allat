@@ -39,6 +39,10 @@ The toolbar popup opens an Insights page: detours per day, when urges show up by
 
 Write what you want to say without sending it. Lock a letter for 1, 3, 7 or 30 days and it stays hidden from you until then. You can shred a letter at any time, locked or open. Locking hides the text from you in the app. It is not encryption, so anyone with access to your browser profile could still read it.
 
+## Reality check
+
+Write down why it ended, in your own words. Reorder the list, and choose which reasons may appear in pop-ups. They show up with a small "A reason it ended" label, mixed in with your other pop-ups.
+
 ## Privacy
 
 - Matching happens in memory on your device. Page content, URLs and search text are never stored.
@@ -67,6 +71,7 @@ node matcher.test.js && node rules.test.js && node stats.test.js
 |---|---|
 | `matcher.js` | Text normalising and trigger matching, no DOM |
 | `rules.js` | Escalation ladder and import validation, no DOM |
+| `reasons.*` | Reality check page |
 | `letters.*` | Unsent letters page |
 | `stats.js` | Insights numbers and CSV export, no DOM |
 | `content.js` | Watches the page, draws the overlay |
@@ -76,7 +81,7 @@ node matcher.test.js && node rules.test.js && node stats.test.js
 
 ## Status
 
-M1 plus pre-emptive blur, "Why did this fire?", delayed removal, Insights and unsent letters. Not on any extension store yet.
+M1 plus pre-emptive blur, "Why did this fire?", delayed removal, Insights, unsent letters and reality check. Not on any extension store yet.
 
 ## License
 

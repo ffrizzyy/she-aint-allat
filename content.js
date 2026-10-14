@@ -163,6 +163,7 @@
   .tile{border-radius:16px;padding:20px;margin-bottom:16px;display:grid;place-items:center;text-align:center;min-height:96px;font-size:1.125rem;line-height:1.6}
   .tile img{max-width:100%;max-height:50vh;border-radius:12px;display:block}
   .tile p{margin:0;overflow-wrap:anywhere}
+  .tile small{display:block;font-size:.8rem;opacity:.8;margin-bottom:6px}
   .timer{margin:0 0 12px;color:var(--muted);font-size:.875rem;text-align:center}
   .row{display:flex;gap:8px;flex-wrap:wrap}
   button{font:inherit;font-weight:600;min-height:44px;padding:0 16px;border-radius:12px;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--fg);flex:1}
@@ -202,6 +203,7 @@
     tile.style.color = ink;
     if (item.type === 'image') tile.append(el('img', { src: item.value, alt: item.altText || t('pic') }));
     else tile.append(el('p', { textContent: item.value || t('fallback') }));
+    if (item.category === 'reality') tile.prepend(el('small', { textContent: t('reason_label') }));
 
     let tick, auto, left = 30;
     const back = el('button', { className: 'primary', textContent: level === 0 ? t('close') : t('back') });

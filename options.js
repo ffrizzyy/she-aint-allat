@@ -137,7 +137,7 @@ $('pi').onsubmit = async (e) => {
 
 // FR-17. shortcut: images ride inside the JSON as data URLs, no zip. Add a zip when exports get big.
 $('exp').onclick = async () => {
-  const data = { app: 'she-aint-allat', v: 1, triggers: await get('triggers', []), pool: await get('pool', []), events: await get('events', []), letters: await get('letters', []), settings: await get('settings', {}) };
+  const data = { app: 'she-aint-allat', v: 1, triggers: await get('triggers', []), pool: await get('pool', []), events: await get('events', []), letters: await get('letters', []), reasons: await get('reasons', []), settings: await get('settings', {}) };
   const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' })), download: 'she-aint-allat-export.json' });
   a.click();
   URL.revokeObjectURL(a.href);
@@ -151,7 +151,7 @@ $('ifile').onchange = async () => {
     if (!c) throw new Error('bad');
     await set({
       triggers: union(await get('triggers', []), c.triggers), pool: union(await get('pool', []), c.pool).slice(0, 200),
-      events: union(await get('events', []), c.events), letters: union(await get('letters', []), c.letters).slice(0, 50), settings: { ...(await get('settings', {})), locale: c.locale }
+      events: union(await get('events', []), c.events), letters: union(await get('letters', []), c.letters).slice(0, 50), reasons: union(await get('reasons', []), c.reasons).slice(0, 30), settings: { ...(await get('settings', {})), locale: c.locale }
     });
     say('imported');
     render();

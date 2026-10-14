@@ -14,7 +14,7 @@ button.primary{background:var(--accent);border-color:var(--accent);color:var(--o
 button.primary:hover{background:var(--accent-hover)}
 button.danger{color:var(--danger);border-color:var(--danger)}
 :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
-ul{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+ul,ol{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
 li{display:flex;gap:12px;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-surface);padding:8px 8px 8px 16px}
 li img{max-height:56px;max-width:96px;border-radius:8px}
 li span{overflow-wrap:anywhere}

@@ -8,6 +8,7 @@
   const DELAY = 24 * 3600e3; // FR-08: a removed trigger stays active this long
   const LETTER_MAX = 20000, LETTERS_CAP = 50;
   const DELAYS = { 1: 864e5, 3: 3 * 864e5, 7: 7 * 864e5, 30: 30 * 864e5 }; // FR-12: chosen delay, in days
+  const REASON_MAX = 300, REASONS_CAP = 30;
   const GRACE = 15 * 60e3; // my addition: a trigger added by mistake can go at once
   const str = (v, n) => (typeof v === 'string' ? v.slice(0, n) : '');
   const arr = (a) => (Array.isArray(a) ? a : []);
@@ -24,6 +25,15 @@
   const removalState = (t, now) => (!t.removeRequestedAt ? 'active' : now - t.removeRequestedAt >= DELAY ? 'confirm' : 'pending');
   // Letters (FR-12). Open is derived from time, shredded means deleted. Locking hides the text from the user, it is not encryption.
   const letterState = (l, now) => (now >= l.unlockAt ? 'open' : 'locked');
+  // Reality check (FR-13): the user's own reasons, optionally shown as a pool category.
+  const withReasons = (pool, reasons) => [...pool, ...reasons.filter((r) => r.inPool).map((r) => ({ id: 'reason-' + r.id, type: 'text', value: r.text, category: 'reality' }))];
+  function move(list, id, dir) {
+    const i = list.findIndex((x) => x.id === id), j = i + dir;
+    if (i < 0 || j < 0 || j >= list.length) return list;
+    const out = list.slice();
+    [out[i], out[j]] = [out[j], out[i]];
+    return out;
+  }
   const canRemoveNow = (t, now) => now - (t.createdAt || 0) < GRACE;
 
   // Import is a trust boundary: validate and cap everything. Returns null for a file that is not ours.
@@ -40,11 +50,13 @@
         level: x && [0, 1, 2].includes(x.level) ? x.level : null, response: x && RESP.includes(x.response) ? x.response : null })),
       letters: arr(o.letters).filter((x) => x && typeof x.body === 'string' && x.body.trim() && +x.unlockAt > 0).slice(0, LETTERS_CAP).map((x) => ({
         id: str(x.id, 64) || uid(), body: str(x.body, LETTER_MAX), createdAt: +x.createdAt || Date.now(), unlockAt: +x.unlockAt })),
+      reasons: arr(o.reasons).filter((x) => x && typeof x.text === 'string' && x.text.trim()).slice(0, REASONS_CAP).map((x) => ({
+        id: str(x.id, 64) || uid(), text: str(x.text, REASON_MAX), inPool: !!x.inPool })),
       locale: o.settings && o.settings.locale === 'id' ? 'id' : 'en'
     };
   }
 
-  const api = { level, clean, removalState, canRemoveNow, letterState, WINDOW, DELAY, GRACE, DELAYS, LETTER_MAX, LETTERS_CAP };
+  const api = { level, clean, removalState, canRemoveNow, letterState, withReasons, move, REASON_MAX, REASONS_CAP, WINDOW, DELAY, GRACE, DELAYS, LETTER_MAX, LETTERS_CAP };
   if (typeof module !== 'undefined') module.exports = api;
   else globalThis.SAA = Object.assign(globalThis.SAA || {}, { rules: api });
 })();

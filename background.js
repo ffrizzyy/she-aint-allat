@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
 });
 
 async function pick() {
-  const pool = await get('pool', []);
+  const pool = SAA.rules.withReasons(await get('pool', []), await get('reasons', []));
   if (!pool.length) return { type: 'text', value: null };
   const { last } = await chrome.storage.session.get('last');
   const options = pool.length > 1 ? pool.filter((p) => p.id !== last) : pool; // no immediate repeat

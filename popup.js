@@ -17,7 +17,18 @@ function tile(item) {
     i.src = item.value;
     i.alt = item.altText || t('pic');
     d.append(i);
-  } else d.textContent = (item && item.value) || t('fallback');
+  } else {
+    const p = document.createElement('p');
+    p.style.margin = '0';
+    p.textContent = (item && item.value) || t('fallback');
+    if (item && item.category === 'reality') {
+      const small = document.createElement('small');
+      small.style.display = 'block';
+      small.textContent = t('reason_label');
+      d.append(small);
+    }
+    d.append(p);
+  }
   return d;
 }
 

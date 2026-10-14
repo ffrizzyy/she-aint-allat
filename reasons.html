@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>she aint allat</title>
+<link rel="stylesheet" href="ui.css">
+<style>li{align-items:flex-start}li>div:first-child{flex:1;min-width:0}li p{margin:0 0 8px;overflow-wrap:anywhere}.check{display:flex;flex-direction:row;align-items:center;gap:8px;font-weight:400;margin:0}.check input{width:24px;min-height:24px}</style></head>
+<body><main>
+<h1 data-i18n="reasons"></h1>
+<p class="muted" data-i18n="rea_help"></p>
+<form id="rf"><label><span data-i18n="rea_new"></span><input id="text" required maxlength="300" autocomplete="off"></label><button class="primary" data-i18n="add"></button></form>
+<p id="msg" role="status" aria-live="polite"></p>
+<ol id="list"></ol>
+<p><a href="options.html" data-i18n="settings"></a></p>
+<p><small class="muted" data-i18n="disclaimer"></small></p>
+</main>
+<script src="i18n.js"></script><script src="rules.js"></script><script src="reasons.js"></script>
+</body></html>

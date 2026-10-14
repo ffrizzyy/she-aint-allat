@@ -33,6 +33,8 @@
       let_body: 'Your letter', let_delay: 'Hide it for', d_1: '1 day', d_3: '3 days', d_7: '7 days', d_30: '30 days', let_lock: 'Lock this letter',
       let_locked: 'Locked until {n}', let_open: 'Ready to read. It opened on {n}.', let_read: 'Read it', let_shred: 'Shred', let_from: 'Letter from {n}',
       let_shred_confirm: 'Shred this letter for good? This cannot be undone.', let_empty: 'No letters yet.', let_saved: 'Locked. It will open on {n}.', let_full: 'You have 50 letters. Shred one first.',
+      reasons: 'Reality check', rea_help: 'Write the reasons it ended in your own words. Choose which ones may appear in pop-ups.', rea_new: 'A reason it ended', rea_show: 'Show in pop-ups',
+      up: 'Up', down: 'Down', rea_empty: 'Nothing yet. Add them when you are ready.', reason_label: 'A reason it ended', rea_full: 'You have 30 reasons. Remove one first.',
       locale_note: 'Detours logged:'
     },
     id: {
@@ -67,6 +69,8 @@
       let_body: 'Suratmu', let_delay: 'Sembunyikan selama', d_1: '1 hari', d_3: '3 hari', d_7: '7 hari', d_30: '30 hari', let_lock: 'Kunci surat ini',
       let_locked: 'Terkunci sampai {n}', let_open: 'Siap dibaca. Terbuka pada {n}.', let_read: 'Baca', let_shred: 'Hancurkan', let_from: 'Surat tanggal {n}',
       let_shred_confirm: 'Hancurkan surat ini selamanya? Tidak bisa dibatalkan.', let_empty: 'Belum ada surat.', let_saved: 'Terkunci. Akan terbuka pada {n}.', let_full: 'Kamu punya 50 surat. Hancurkan satu dulu.',
+      reasons: 'Cek kenyataan', rea_help: 'Tulis alasan hubungan itu berakhir dengan kata-katamu sendiri. Pilih mana yang boleh muncul di pop-up.', rea_new: 'Satu alasan berakhir', rea_show: 'Tampilkan di pop-up',
+      up: 'Naik', down: 'Turun', rea_empty: 'Belum ada. Tambahkan saat kamu siap.', reason_label: 'Satu alasan berakhir', rea_full: 'Kamu punya 30 alasan. Hapus satu dulu.',
       locale_note: 'Pengalihan tercatat:'
     }
   };
