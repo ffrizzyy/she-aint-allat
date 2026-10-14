@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "she aint allat",
+  "version": "0.1.0",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "scripting",
+    "webNavigation"
+  ],
+  "optional_host_permissions": [
+    "*://*/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
+  "background": {
+    "scripts": [
+      "rules.js",
+      "background.js"
+    ]
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"
+  },
+  "incognito": "spanning",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "she-aint-allat@example.com",
+      "strict_min_version": "128.0",
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      }
+    }
+  }
+}

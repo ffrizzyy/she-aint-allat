@@ -117,9 +117,10 @@ async function shrink(file) {
   const k = Math.min(1, 1280 / Math.max(bmp.width, bmp.height));
   const c = Object.assign(document.createElement('canvas'), { width: Math.round(bmp.width * k), height: Math.round(bmp.height * k) });
   c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
-  for (const q of [0.85, 0.7, 0.5]) {
-    const b = await new Promise((r) => c.toBlob(r, 'image/webp', q));
-    if (b && b.type === 'image/webp' && b.size <= 2 * 1024 * 1024) {
+  // Firefox may not encode WebP, so fall back to JPEG. Either way the canvas re-encode strips EXIF.
+  for (const [fmt, q] of [['image/webp', 0.85], ['image/webp', 0.7], ['image/webp', 0.5], ['image/jpeg', 0.8], ['image/jpeg', 0.6]]) {
+    const b = await new Promise((r) => c.toBlob(r, fmt, q));
+    if (b && b.type === fmt && b.size <= 2 * 1024 * 1024) {
       return new Promise((r) => { const f = new FileReader(); f.onload = () => r(f.result); f.readAsDataURL(b); });
     }
   }

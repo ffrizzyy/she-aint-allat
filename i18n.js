@@ -35,6 +35,13 @@
       let_shred_confirm: 'Shred this letter for good? This cannot be undone.', let_empty: 'No letters yet.', let_saved: 'Locked. It will open on {n}.', let_full: 'You have 50 letters. Shred one first.',
       reasons: 'Reality check', rea_help: 'Write the reasons it ended in your own words. Choose which ones may appear in pop-ups.', rea_new: 'A reason it ended', rea_show: 'Show in pop-ups',
       up: 'Up', down: 'Down', rea_empty: 'Nothing yet. Add them when you are ready.', reason_label: 'A reason it ended', rea_full: 'You have 30 reasons. Remove one first.',
+      sup_intro: 'You do not have to carry this alone. If you are in danger or thinking about hurting yourself, contact emergency services now.',
+      sup_region: 'Where are you?', reg_ID: 'Indonesia', reg_US: 'United States', reg_UK: 'United Kingdom and Ireland', reg_GLOBAL: 'Somewhere else',
+      sup_k_emergency: 'Emergency', sup_k_crisis: 'Crisis line', sup_k_dir: 'Directory', sup_k_directory: 'Directory', sup_call: 'Call', sup_site: 'Website',
+      sup_numbers: 'Numbers can change. If a call does not connect, check the website.',
+      sup_msg_title: 'Message someone you trust', sup_msg_help: 'This only sends what is written here. Nothing about your browsing is added.', sup_msg_label: 'Your message',
+      sup_msg_default: 'Hi. I am having a hard time right now and could use someone to talk to. Are you free?',
+      sup_copy: 'Copy message', sup_copied: 'Copied.', sup_wa: 'Open WhatsApp', sup_sms: 'Text message',
       locale_note: 'Detours logged:'
     },
     id: {
@@ -71,6 +78,13 @@
       let_shred_confirm: 'Hancurkan surat ini selamanya? Tidak bisa dibatalkan.', let_empty: 'Belum ada surat.', let_saved: 'Terkunci. Akan terbuka pada {n}.', let_full: 'Kamu punya 50 surat. Hancurkan satu dulu.',
       reasons: 'Cek kenyataan', rea_help: 'Tulis alasan hubungan itu berakhir dengan kata-katamu sendiri. Pilih mana yang boleh muncul di pop-up.', rea_new: 'Satu alasan berakhir', rea_show: 'Tampilkan di pop-up',
       up: 'Naik', down: 'Turun', rea_empty: 'Belum ada. Tambahkan saat kamu siap.', reason_label: 'Satu alasan berakhir', rea_full: 'Kamu punya 30 alasan. Hapus satu dulu.',
+      sup_intro: 'Kamu tidak harus menanggung ini sendirian. Kalau kamu dalam bahaya atau berpikir untuk menyakiti dirimu, hubungi layanan darurat sekarang.',
+      sup_region: 'Kamu di mana?', reg_ID: 'Indonesia', reg_US: 'Amerika Serikat', reg_UK: 'Inggris dan Irlandia', reg_GLOBAL: 'Tempat lain',
+      sup_k_emergency: 'Darurat', sup_k_crisis: 'Layanan krisis', sup_k_dir: 'Direktori', sup_k_directory: 'Direktori', sup_call: 'Telepon', sup_site: 'Situs web',
+      sup_numbers: 'Nomor bisa berubah. Kalau panggilan tidak tersambung, cek situs webnya.',
+      sup_msg_title: 'Kirim pesan ke orang yang kamu percaya', sup_msg_help: 'Hanya isi yang tertulis di sini yang dikirim. Tidak ada informasi penjelajahanmu yang ditambahkan.', sup_msg_label: 'Pesanmu',
+      sup_msg_default: 'Hai. Aku sedang kesulitan sekarang dan butuh teman bicara. Kamu ada waktu?',
+      sup_copy: 'Salin pesan', sup_copied: 'Tersalin.', sup_wa: 'Buka WhatsApp', sup_sms: 'Pesan teks',
       locale_note: 'Pengalihan tercatat:'
     }
   };

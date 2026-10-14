@@ -1,5 +1,5 @@
 // Service worker: pool pick, ladder escalation, event log, badge. No network.
-importScripts('rules.js');
+if (typeof importScripts === 'function') importScripts('rules.js'); // service worker (Chrome). Firefox loads rules.js from the manifest.
 const DAY = 864e5;
 // One writer at a time: read-modify-write on `events` must not interleave.
 let chain = Promise.resolve();
@@ -60,6 +60,10 @@ async function handle(msg, sender) {
       const e = events.find((x) => x.id === msg.eventId);
       if (e) { e.response = msg.response; await chrome.storage.local.set({ events }); }
     });
+    return;
+  }
+  if (msg.type === 'support') { // SAF-04: one tap from the overlay
+    await chrome.tabs.create({ url: chrome.runtime.getURL('support.html') });
     return;
   }
   if (msg.type === 'manual') { // popup: urge button (FR-03) and "I looked anyway" (FR-11)

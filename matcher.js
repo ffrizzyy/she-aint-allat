@@ -69,7 +69,11 @@
     return null;
   }
 
-  const api = { norm, loose, glob, build, scan, scanUrl };
+  // SAF-01: never intercept crisis and support sites. Non-removable. The clinical advisor curates this per locale (SAF-06).
+  const SAFE = ['findahelpline.com', 'befrienders.org', '988lifeline.org', 'intothelightid.org', 'samaritans.org', 'iasp.info'];
+  const isSafeHost = (h) => SAFE.some((d) => h === d || h.endsWith('.' + d));
+
+  const api = { norm, loose, glob, build, scan, scanUrl, SAFE, isSafeHost };
   if (typeof module !== 'undefined') module.exports = api;
   else globalThis.SAA = Object.assign(globalThis.SAA || {}, { matcher: api });
 })();

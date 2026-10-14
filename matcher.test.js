@@ -47,4 +47,7 @@ const big = build(['mira', 'rahardjo', 'budi', 'jl melati', 'smanda'].map((v, i)
 const s0 = performance.now();
 scan(big, 'lorem ipsum dolor sit amet '.repeat(800));
 assert(performance.now() - s0 < 50, 'scan too slow');
+// SAF-01 list is exported for content.js and the support page
+const { isSafeHost, SAFE } = require('./matcher.js');
+assert(SAFE.length >= 6 && isSafeHost('findahelpline.com'));
 console.log('matcher ok');

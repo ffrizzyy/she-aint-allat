@@ -24,12 +24,22 @@ On levels 1 and 2 the page blurs the moment a match is found, before the card lo
 
 ## Install (developer mode)
 
-Needs Chrome, Edge or Brave 120 or newer.
+Needs Chrome, Edge or Brave 120 or newer. For Firefox see below.
 
 1. Download or clone this repo.
 2. Open `chrome://extensions` and turn on **Developer mode**.
 3. Click **Load unpacked** and select this folder.
 4. Open the extension's **Settings**, add a trigger and a pop-up line, then use **Allow this site** for each site to watch.
+
+### Firefox (experimental)
+
+Needs Firefox 128 or newer.
+
+1. Run `node build-firefox.js`. It writes `dist/firefox`.
+2. Open `about:debugging`, choose **This Firefox**, then **Load Temporary Add-on**, and pick `dist/firefox/manifest.json`.
+3. Firefox asks for site access one site at a time, the same as Chrome.
+
+Temporary add-ons are removed when Firefox closes. Before you publish it, change the add-on id in `manifest.firefox.json`.
 
 ## Insights
 
@@ -43,6 +53,10 @@ Write what you want to say without sending it. Lock a letter for 1, 3, 7 or 30 d
 
 Write down why it ended, in your own words. Reorder the list, and choose which reasons may appear in pop-ups. They show up with a small "A reason it ended" label, mixed in with your other pop-ups.
 
+## Support
+
+The toolbar popup and every level 1 and 2 card have a "Need support?" button. It opens a page with emergency numbers and crisis lines for Indonesia, the US, the UK and Ireland, plus worldwide directories, and a short message you can send to someone you trust by WhatsApp, text or copy. Only the text in the box is sent, nothing about your browsing. These sites are never intercepted by the extension. The resource list needs review by a clinical advisor before each release.
+
 ## Privacy
 
 - Matching happens in memory on your device. Page content, URLs and search text are never stored.
@@ -53,18 +67,18 @@ Write down why it ended, in your own words. Reorder the list, and choose which r
 
 ## Known limits
 
-- Chrome family only for now. No Firefox or Safari build yet.
+- Chrome family is the tested target. The Firefox build is new and only checked by tests, not yet by hand. No Safari build.
 - Only the top frame of each page is watched.
 - No text recognition inside images or video.
 - A hostile site can probe for your trigger words by watching for the overlay. See the known risk in [SECURITY.md](SECURITY.md).
-- Crisis and helpline sites are never intercepted. The built-in list is short and needs review per country.
+- Crisis and helpline sites are never intercepted. The list is short and needs review per country (`matcher.js`, `resources.js`).
 
 ## Development
 
 Plain JavaScript, no build step.
 
 ```
-node matcher.test.js && node rules.test.js && node stats.test.js
+node matcher.test.js && node rules.test.js && node stats.test.js && node manifest.test.js && node support.test.js
 ```
 
 | File | Job |
@@ -77,11 +91,13 @@ node matcher.test.js && node rules.test.js && node stats.test.js
 | `content.js` | Watches the page, draws the overlay |
 | `background.js` | Picks pool items, writes the event log |
 | `options.*`, `popup.*` | Settings page and toolbar popup |
+| `manifest.firefox.json`, `build-firefox.js` | Firefox manifest and the script that builds `dist/firefox` |
+| `support.*`, `resources.js` | Support page and its region data |
 | `i18n.js` | English and Bahasa Indonesia strings |
 
 ## Status
 
-M1 plus pre-emptive blur, "Why did this fire?", delayed removal, Insights, unsent letters and reality check. Not on any extension store yet.
+M1 plus pre-emptive blur, "Why did this fire?", delayed removal, Insights, unsent letters, reality check and a support page. Not on any extension store yet.
 
 ## License
 

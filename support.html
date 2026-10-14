@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>she aint allat</title>
+<link rel="stylesheet" href="ui.css">
+<style>li{align-items:flex-start}li>div:first-child{flex:1;min-width:0}textarea{min-height:120px;resize:vertical}</style></head>
+<body><main>
+<h1 data-i18n="support"></h1>
+<p data-i18n="sup_intro"></p>
+<label><span data-i18n="sup_region"></span><select id="region"></select></label>
+<ul id="list"></ul>
+<p class="muted" data-i18n="sup_numbers"></p>
+<section><h2 data-i18n="sup_msg_title"></h2><p class="muted" data-i18n="sup_msg_help"></p>
+<label><span data-i18n="sup_msg_label"></span><textarea id="msg" maxlength="500"></textarea></label>
+<div class="row"><button id="copy" class="primary" data-i18n="sup_copy"></button>
+<a class="btn" id="wa" target="_blank" rel="noopener" data-i18n="sup_wa"></a><a class="btn" id="sms" data-i18n="sup_sms"></a></div>
+<p id="status" role="status" aria-live="polite"></p></section>
+<p><a href="options.html" data-i18n="settings"></a></p>
+<p><small class="muted" data-i18n="disclaimer"></small></p>
+</main>
+<script src="i18n.js"></script><script src="resources.js"></script><script src="support.js"></script>
+</body></html>

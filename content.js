@@ -6,10 +6,7 @@
   window.__saa = true;
   const { matcher: M, t } = SAA;
 
-  // SAF-01: never intercept crisis and support sites. Non-removable. Advisor curates per locale.
-  const SAFE = ['findahelpline.com', 'befrienders.org', '988lifeline.org', 'intothelightid.org', 'samaritans.org', 'iasp.info'];
-  const h = location.hostname;
-  if (SAFE.some((d) => h === d || h.endsWith('.' + d))) return;
+  if (M.isSafeHost(location.hostname)) return; // SAF-01
 
   const SKIP = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE']);
   const ATTRS = ['alt', 'title', 'aria-label', 'href', 'src'];
@@ -35,7 +32,7 @@
     const host = (hostEl = document.createElement('div'));
     host.style.cssText = FULL;
     rootEl = host.attachShadow({ mode: 'closed' });
-    rootEl.adoptedStyleSheets = [sheet];
+    style(rootEl);
     rootEl.append(el('div', { className: 'wrap lv1' }));
     document.documentElement.append(host);
     vt = setTimeout(() => { unveil(); fail(); }, 1500);
@@ -175,8 +172,12 @@
   @keyframes in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
   @keyframes fade{from{opacity:0}to{opacity:1}}
   @media (prefers-reduced-motion:reduce){.card{animation:fade 120ms linear}}`;
-  const sheet = new CSSStyleSheet();
-  sheet.replaceSync(CSS);
+  // Firefox content scripts cannot always hand a constructed sheet to the page's shadow root, so fall back to a <style> element.
+  let sheet = null;
+  try { sheet = new CSSStyleSheet(); sheet.replaceSync(CSS); } catch { sheet = null; }
+  function style(root) {
+    try { if (!sheet) throw new Error('no sheet'); root.adoptedStyleSheets = [sheet]; } catch { root.append(el('style', { textContent: CSS })); }
+  }
   const PASTEL = [['#FFD43B', '#2B2200'], ['#74C0FC', '#0B2540'], ['#B2F2BB', '#0B2E13'], ['#FFA8C5', '#3A0A1E'], ['#D0BFFF', '#20123F']];
 
   function el(tag, props, ...kids) {
@@ -191,11 +192,11 @@
     if (!hostEl) { // no veil (level 0, or escalated from 0): build the host now
       hostEl = document.createElement('div');
       rootEl = hostEl.attachShadow({ mode: 'closed' });
-      rootEl.adoptedStyleSheets = [sheet];
     }
     const host = hostEl, root = rootEl;
     host.style.cssText = level === 0 ? 'all:initial;position:fixed;right:16px;bottom:16px;z-index:2147483647' : FULL;
     root.replaceChildren(); // drops the veil, same host so there is no flicker
+    style(root);
 
     const [bg, ink] = PASTEL[Math.floor(Math.random() * PASTEL.length)];
     const tile = el('div', { className: 'tile' });
@@ -220,7 +221,8 @@
       why.setAttribute('aria-expanded', String(!open));
       whyText.textContent = open ? '' : t('why_text', (trigs.get(id) || {}).value || '', t('sig_' + signal));
     };
-    const card = el('div', { className: 'card' }, tile, ...(timer ? [timer] : []), el('div', { className: 'row' }, back, ...(cont ? [cont] : [])), ...(level > 0 ? [why, whyText] : []));
+    const help = el('button', { className: 'link', textContent: t('support'), onclick: () => send({ type: 'support' }) });
+    const card = el('div', { className: 'card' }, tile, ...(timer ? [timer] : []), el('div', { className: 'row' }, back, ...(cont ? [cont] : [])), ...(level > 0 ? [why, whyText, help] : []));
     const wrap = el('div', { className: 'wrap lv' + level }, card);
     wrap.setAttribute('role', level === 0 ? 'status' : 'alertdialog');
     wrap.setAttribute('aria-label', t('label'));
