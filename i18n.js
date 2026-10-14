@@ -25,6 +25,10 @@
       sig_text: 'text on the page', sig_attr: 'an image description or label', sig_link: 'a link on the page', sig_img: 'an image file name',
       rm_pending: 'Removal pending, still active for {n}h', rm_confirm: 'Ready to remove. Remove for good?', keep: 'Keep it', rm_final: 'Remove for good',
       rm_note: 'Removal is scheduled. It stays active for 24 hours.',
+      insights: 'Insights', ins_empty: 'Nothing yet. That is fine.', ins_today: 'Detours today: {n}', ins_days: 'Detours per day (last 14 days)',
+      ins_heat: 'When urges show up (hour by weekday)', ins_domains: 'Where they show up', ins_trend: 'This week', ins_csv: 'Export CSV',
+      tr_quiet: 'Quieter than last week.', tr_same: 'About the same as last week.', tr_busy: 'A busier week than the last. That happens, and it is okay.', tr_none: 'Not enough yet to compare.',
+      ins_note: 'A detour is a pause you chose. Looking anyway is never counted against you.', col_day: 'Day', col_n: 'Detours', col_site: 'Site', col_urges: 'Urges',
       locale_note: 'Detours logged:'
     },
     id: {
@@ -51,6 +55,10 @@
       sig_text: 'teks di halaman', sig_attr: 'deskripsi atau label gambar', sig_link: 'tautan di halaman', sig_img: 'nama berkas gambar',
       rm_pending: 'Penghapusan tertunda, masih aktif {n} jam lagi', rm_confirm: 'Siap dihapus. Hapus permanen?', keep: 'Pertahankan', rm_final: 'Hapus permanen',
       rm_note: 'Penghapusan dijadwalkan. Pemicu tetap aktif selama 24 jam.',
+      insights: 'Wawasan', ins_empty: 'Belum ada. Tidak apa-apa.', ins_today: 'Pengalihan hari ini: {n}', ins_days: 'Pengalihan per hari (14 hari terakhir)',
+      ins_heat: 'Kapan dorongan muncul (jam menurut hari)', ins_domains: 'Di mana muncul', ins_trend: 'Minggu ini', ins_csv: 'Ekspor CSV',
+      tr_quiet: 'Lebih tenang dari minggu lalu.', tr_same: 'Hampir sama dengan minggu lalu.', tr_busy: 'Minggu yang lebih ramai dari sebelumnya. Itu wajar, dan tidak apa-apa.', tr_none: 'Belum cukup untuk dibandingkan.',
+      ins_note: 'Pengalihan adalah jeda yang kamu pilih. Tetap mengintip tidak pernah dihitung sebagai kesalahan.', col_day: 'Hari', col_n: 'Pengalihan', col_site: 'Situs', col_urges: 'Dorongan',
       locale_note: 'Pengalihan tercatat:'
     }
   };

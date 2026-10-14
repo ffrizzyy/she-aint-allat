@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>she aint allat</title>
+<link rel="stylesheet" href="ui.css">
+<style>
+table{border-collapse:collapse;width:100%}
+caption{text-align:left;font-weight:600;font-size:1.125rem;padding-bottom:8px}
+th,td{padding:4px 8px;text-align:left;font-weight:400}
+thead th,tbody th{font-size:.875rem;color:var(--muted);font-weight:600}
+.bar{height:12px;border-radius:6px;background:color-mix(in srgb,var(--fg) 35%,transparent)}
+.scroll{overflow-x:auto}
+.heat td{text-align:center;min-width:28px;font-size:.75rem;border:1px solid var(--bg)}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+</style></head>
+<body><main>
+<h1 data-i18n="insights"></h1>
+<p class="muted" data-i18n="ins_note"></p>
+<p id="empty" hidden data-i18n="ins_empty"></p>
+<div id="data" hidden>
+<section><h2 id="today"></h2><p id="trend"></p></section>
+<section><div class="scroll"><table id="days"></table></div></section>
+<section><div class="scroll" tabindex="0" role="region" aria-labelledby="heatcap"><table id="heat" class="heat"></table></div></section>
+<section><table id="sites"></table></section>
+<section><button id="csv" data-i18n="ins_csv"></button></section>
+</div>
+<p><a href="options.html" data-i18n="settings"></a></p>
+<p><small class="muted" data-i18n="disclaimer"></small></p>
+</main>
+<script src="i18n.js"></script><script src="stats.js"></script><script src="insights.js"></script>
+</body></html>

@@ -32,5 +32,6 @@ $('looked').onclick = async () => {
   d.textContent = t('looked_ok');
   $('shown').replaceChildren(d);
 };
+$('insights').onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL('insights.html') });
 $('settings').onclick = () => chrome.runtime.openOptionsPage();
 $('support').onclick = () => chrome.tabs.create({ url: chrome.runtime.getURL('options.html#support') }); // SAF-04: two taps

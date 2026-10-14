@@ -31,6 +31,10 @@ Needs Chrome, Edge or Brave 120 or newer.
 3. Click **Load unpacked** and select this folder.
 4. Open the extension's **Settings**, add a trigger and a pop-up line, then use **Allow this site** for each site to watch.
 
+## Insights
+
+The toolbar popup opens an Insights page: detours per day, when urges show up by hour and weekday, which sites they come from, and a one line comparison with last week. Wording is kind and never counts slips against you. Everything is a table you can read with a screen reader, and you can export a CSV.
+
 ## Privacy
 
 - Matching happens in memory on your device. Page content, URLs and search text are never stored.
@@ -52,13 +56,14 @@ Needs Chrome, Edge or Brave 120 or newer.
 Plain JavaScript, no build step.
 
 ```
-node matcher.test.js && node rules.test.js
+node matcher.test.js && node rules.test.js && node stats.test.js
 ```
 
 | File | Job |
 |---|---|
 | `matcher.js` | Text normalising and trigger matching, no DOM |
 | `rules.js` | Escalation ladder and import validation, no DOM |
+| `stats.js` | Insights numbers and CSV export, no DOM |
 | `content.js` | Watches the page, draws the overlay |
 | `background.js` | Picks pool items, writes the event log |
 | `options.*`, `popup.*` | Settings page and toolbar popup |
@@ -66,7 +71,7 @@ node matcher.test.js && node rules.test.js
 
 ## Status
 
-M1 plus pre-emptive blur, "Why did this fire?" and delayed removal. Not on any extension store yet.
+M1 plus pre-emptive blur, "Why did this fire?", delayed removal and Insights. Not on any extension store yet.
 
 ## License
 
