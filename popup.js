@@ -26,8 +26,9 @@ function renderSnooze(settings) {
 }
 $('snzGo').onclick = () => {
   const b = $('snzGo');
+  if (b.getAttribute('aria-disabled') === 'true') return; // aria-disabled, not disabled, so keyboard focus stays on the button
   let n = 5;
-  b.disabled = true;
+  b.setAttribute('aria-disabled', 'true');
   b.textContent = t('snooze_wait', n);
   const tick = setInterval(async () => {
     n--;
@@ -37,7 +38,7 @@ $('snzGo').onclick = () => {
     const settings = { ...((await chrome.storage.local.get('settings')).settings || {}), snoozeUntil: Date.now() + minutes * 60e3 };
     await chrome.storage.local.set({ settings });
     chrome.runtime.sendMessage({ type: 'manual', response: 'snoozed' });
-    b.disabled = false;
+    b.removeAttribute('aria-disabled');
     b.textContent = t('snooze');
     renderSnooze(settings);
   }, 1000);

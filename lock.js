@@ -34,8 +34,7 @@
     if (!main) return;
     main.hidden = true; // no flash of the lists while we check
     try {
-      const { settings = {} } = await chrome.storage.local.get('settings');
-      const lock = settings.lock;
+      const { settings = {}, lock } = await chrome.storage.local.get(['settings', 'lock']); // lock lives apart from settings so content scripts never load the hash
       const { unlockedUntil = 0 } = await chrome.storage.session.get('unlockedUntil');
       if (!lock || unlockedUntil > Date.now()) { main.hidden = false; return; }
       if (settings.locale) SAA.lang = settings.locale;

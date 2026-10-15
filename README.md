@@ -94,7 +94,7 @@ The toolbar popup and every level 1 and 2 card have a "Need support?" button. It
 Plain JavaScript, no build step.
 
 ```
-node matcher.test.js && node rules.test.js && node stats.test.js && node manifest.test.js && node support.test.js && node lock.test.js
+node matcher.test.js && node rules.test.js && node stats.test.js && node manifest.test.js && node support.test.js && node lock.test.js && node background.test.js
 ```
 
 | File | Job |

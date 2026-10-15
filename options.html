@@ -1,14 +1,21 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>she aint allat</title>
 <link rel="stylesheet" href="ui.css"></head>
-<body><main>
-<h1 data-i18n="title"></h1>
-<p class="row"><a class="btn" href="insights.html" data-i18n="insights"></a><a class="btn" href="letters.html" data-i18n="letters"></a><a class="btn" href="reasons.html" data-i18n="reasons"></a></p>
+<body><main class="settings">
+<header class="top"><h1 data-i18n="title"></h1>
+<label class="lang"><span class="sr" data-i18n="h_lang"></span>
+<select id="lang"><option value="en">English</option><option value="id">Bahasa Indonesia</option></select></label></header>
 
-<section><label><span data-i18n="h_lang"></span>
-<select id="lang"><option value="en">English</option><option value="id">Bahasa Indonesia</option></select></label></section>
+<div class="layout">
+<nav class="side" aria-labelledby="navt"><span id="navt" class="sr" data-i18n="settings"></span>
+<a href="#sec-triggers" data-i18n="h_trig"></a><a href="#sec-redirect" data-i18n="h_redirect"></a><a href="#sec-sites" data-i18n="h_sites"></a>
+<a href="#sec-pool" data-i18n="h_pool"></a><a href="#sec-lock" data-i18n="h_lock"></a><a href="#sec-data" data-i18n="h_data"></a>
+<hr>
+<a href="insights.html" data-i18n="insights"></a><a href="letters.html" data-i18n="letters"></a><a href="reasons.html" data-i18n="reasons"></a><a href="night.html" data-i18n="night"></a><a href="support.html" data-i18n="support"></a>
+</nav>
 
-<section><h2 data-i18n="h_trig"></h2><p class="muted" data-i18n="trig_help"></p>
+<div class="content">
+<section id="sec-triggers"><header class="sec-head"><h2 data-i18n="h_trig"></h2><p class="muted" data-i18n="trig_help"></p></header>
 <form id="tf"><div class="grid">
 <label><span data-i18n="value"></span><input id="tv" required maxlength="200" autocomplete="off"></label>
 <label><span data-i18n="kind"></span><select id="tk">
@@ -19,36 +26,38 @@
 </div><button class="primary" data-i18n="add"></button></form>
 <ul id="triggers"></ul></section>
 
-<section><h2 data-i18n="h_redirect"></h2><p class="muted" data-i18n="redirect_help"></p>
-<form id="rdf"><label><span data-i18n="redirect_label"></span><input id="redir" type="url" maxlength="500" placeholder="https://" autocomplete="off"></label>
-<div class="row"><button class="primary" data-i18n="save"></button><button type="button" id="redirClear" data-i18n="remove"></button></div></form></section>
+<section id="sec-redirect"><header class="sec-head"><h2 data-i18n="h_redirect"></h2><p class="muted" data-i18n="redirect_help"></p></header>
+<form id="rdf" class="inline"><label><span data-i18n="redirect_label"></span><input id="redir" type="url" maxlength="500" placeholder="https://" autocomplete="off"></label>
+<button class="primary" data-i18n="save"></button><button type="button" id="redirClear" data-i18n="remove"></button></form></section>
 
-<section><h2 data-i18n="h_sites"></h2><p class="muted" data-i18n="sites_help"></p>
-<form id="sf"><label><span data-i18n="site"></span><input id="sv" required autocomplete="off"></label><button class="primary" data-i18n="grant"></button></form>
+<section id="sec-sites"><header class="sec-head"><h2 data-i18n="h_sites"></h2><p class="muted" data-i18n="sites_help"></p></header>
+<form id="sf" class="inline"><label><span data-i18n="site"></span><input id="sv" required autocomplete="off"></label><button class="primary" data-i18n="grant"></button></form>
 <ul id="sites"></ul></section>
 
-<section><h2 data-i18n="h_pool"></h2><p class="muted" data-i18n="pool_help"></p>
-<form id="pf"><label><span data-i18n="text_item"></span><input id="pt" maxlength="500" autocomplete="off"></label><button class="primary" data-i18n="add_text"></button></form>
-<form id="pi"><label><span data-i18n="img_item"></span><input id="pfile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" required></label>
-<label><span data-i18n="alt"></span><input id="palt" required maxlength="300" autocomplete="off"></label><button class="primary" data-i18n="add_img"></button></form>
+<section id="sec-pool"><header class="sec-head"><h2 data-i18n="h_pool"></h2><p class="muted" data-i18n="pool_help"></p></header>
+<form id="pf" class="inline subcard"><label><span data-i18n="text_item"></span><input id="pt" maxlength="500" autocomplete="off"></label><button class="primary" data-i18n="add_text"></button></form>
+<form id="pi" class="subcard"><div class="grid"><label><span data-i18n="img_item"></span><input id="pfile" type="file" accept="image/png,image/jpeg,image/webp,image/gif" required></label>
+<label><span data-i18n="alt"></span><input id="palt" required maxlength="300" autocomplete="off"></label></div><button class="primary" data-i18n="add_img"></button></form>
 <ul id="pool"></ul></section>
 
-<section><h2 data-i18n="h_lock"></h2><p class="muted" data-i18n="lock_help"></p>
-<p id="lockstate" role="status"></p>
-<form id="lockf"><label><span data-i18n="lock_new"></span><input id="lp" type="password" autocomplete="new-password"></label>
-<label><span data-i18n="lock_after"></span><select id="lm"><option value="1" data-i18n="m_1"></option><option value="5" selected data-i18n="m_5"></option><option value="15" data-i18n="m_15"></option><option value="60" data-i18n="m_60"></option></select></label>
+<section id="sec-lock"><header class="sec-head"><h2 data-i18n="h_lock"></h2><p class="muted" data-i18n="lock_help"></p></header>
+<p id="lockstate" role="status" class="statepill"></p>
+<form id="lockf"><div class="grid"><label><span data-i18n="lock_new"></span><input id="lp" type="password" autocomplete="new-password"></label>
+<label><span data-i18n="lock_after"></span><select id="lm"><option value="1" data-i18n="m_1"></option><option value="5" selected data-i18n="m_5"></option><option value="15" data-i18n="m_15"></option><option value="60" data-i18n="m_60"></option></select></label></div>
 <button class="primary" data-i18n="lock_set"></button></form>
-<form id="lockoff" hidden><label><span data-i18n="lock_current"></span><input id="lc" type="password" autocomplete="current-password"></label><button data-i18n="lock_off"></button></form></section>
+<form id="lockoff" class="inline" hidden><label><span data-i18n="lock_current"></span><input id="lc" type="password" autocomplete="current-password"></label><button data-i18n="lock_off"></button></form></section>
 
-<section><h2 data-i18n="h_data"></h2><p class="muted" id="count"></p>
-<div class="row"><button id="exp" data-i18n="export"></button><button id="imp" data-i18n="import"></button><button id="wipe" class="danger" data-i18n="del_all"></button></div>
+<section id="sec-data"><header class="sec-head"><h2 data-i18n="h_data"></h2><p class="muted" id="count"></p></header>
+<div class="row"><button id="exp" data-i18n="export"></button><button id="imp" data-i18n="import"></button></div>
+<div class="danger-zone"><button id="wipe" class="danger" data-i18n="del_all"></button></div>
 <input id="ifile" type="file" accept="application/json" hidden></section>
 
-<section id="support"><h2 data-i18n="h_support"></h2><p class="muted" data-i18n="sup_help"></p>
-<a class="btn" href="support.html" data-i18n="support"></a></section>
+<section id="support"><header class="sec-head"><h2 data-i18n="h_support"></h2><p class="muted" data-i18n="sup_help"></p></header>
+<a class="btn primary" href="support.html" data-i18n="support"></a></section>
 
+<p class="foot"><small class="muted" data-i18n="disclaimer"></small></p>
+</div></div>
 <p id="msg" role="status" aria-live="polite"></p>
-<p><small class="muted" data-i18n="disclaimer"></small></p>
 </main>
 <script src="i18n.js"></script><script src="lock.js"></script><script src="rules.js"></script><script src="matcher.js"></script><script src="options.js"></script>
 </body></html>

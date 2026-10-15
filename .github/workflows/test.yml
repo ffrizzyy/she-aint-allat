@@ -13,4 +13,4 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node matcher.test.js && node rules.test.js && node stats.test.js && node manifest.test.js && node support.test.js && node lock.test.js && node build-firefox.js
+      - run: node matcher.test.js && node rules.test.js && node stats.test.js && node manifest.test.js && node support.test.js && node lock.test.js && node background.test.js && node build-firefox.js

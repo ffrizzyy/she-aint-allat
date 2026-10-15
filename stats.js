@@ -3,7 +3,7 @@
 // An "urge" is any logged moment. Slips and continues are never shown as numbers against the user (SAF-03).
 (function () {
   const DAYS = 14;
-  const isDetour = (e) => e.response === 'went_back' || e.response === 'manual';
+  const isDetour = (e) => e.response === 'went_back' || e.response === 'manual' || e.response === 'redirected';
   const key = (d) => `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 
   function summarize(events, now) {

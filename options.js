@@ -2,7 +2,8 @@ const { t } = SAA;
 const $ = (id) => document.getElementById(id);
 const get = async (k, d) => (await chrome.storage.local.get(k))[k] ?? d;
 const set = (o) => chrome.storage.local.set(o);
-const say = (k) => ($('msg').textContent = t(k));
+let sayTimer = 0;
+const say = (k) => { $('msg').textContent = t(k); clearTimeout(sayTimer); sayTimer = setTimeout(() => ($('msg').textContent = ''), 5000); };
 const FILES = ['matcher.js', 'i18n.js', 'content.js'];
 const { clean, removalState, canRemoveNow, validRedirect, DELAY } = SAA.rules;
 const M = SAA.matcher;
@@ -21,10 +22,17 @@ function li(content, actions, label) {
   e.append(content, row);
   return e;
 }
-const span = (s, small) => {
-  const e = document.createElement('span');
-  e.textContent = s;
-  if (small) { const m = document.createElement('small'); m.textContent = ' ' + small; e.append(m); }
+const span = (name, chips = [], note = '') => {
+  const e = document.createElement('div');
+  e.className = 'item';
+  e.append(Object.assign(document.createElement('strong'), { textContent: name }));
+  if (chips.length || note) {
+    const c = document.createElement('div');
+    c.className = 'chips';
+    for (const x of chips) c.append(Object.assign(document.createElement('span'), { className: 'chip', textContent: x }));
+    if (note) c.append(Object.assign(document.createElement('span'), { className: 'chip note', textContent: note }));
+    e.append(c);
+  }
   return e;
 };
 const fill = (ul, rows) => ul.replaceChildren(...(rows.length ? rows : [Object.assign(document.createElement('li'), { textContent: t('empty') })]));
@@ -44,11 +52,11 @@ async function render() {
     const keep = () => save((all) => all.map((y) => { if (y.id !== x.id) return y; const { removeRequestedAt, ...rest } = y; return rest; }));
     // FR-08: removal waits 24 h and is confirmed once more. A trigger added in the last 15 minutes can go at once.
     const actions = st === 'active' ? [['remove', canRemoveNow(x, now) ? drop : schedule]] : st === 'pending' ? [['keep', keep]] : [['rm_final', drop], ['keep', keep]];
-    return li(span(x.value, `${t('k_' + x.kind)}, ${t('s_' + x.sensitivity)}, ${t('l' + x.level)}${note ? ', ' + note : ''}`), actions, x.value);
+    return li(span(x.value, [t('k_' + x.kind), t('s_' + x.sensitivity), t('l' + x.level)], note), actions, x.value);
   }));
   fill($('pool'), pool.map((x) => {
     let c;
-    if (x.type === 'image') { c = document.createElement('img'); c.src = x.value; c.alt = x.altText || t('pic'); } else c = span(x.value);
+    if (x.type === 'image') { c = document.createElement('img'); c.src = x.value; c.alt = x.altText || t('pic'); } else c = Object.assign(document.createElement('p'), { className: 'quote', textContent: x.value });
     // FR-07: favorites show up more often, night-only items wait for the night hours.
     const patch = async (fn) => { await set({ pool: (await get('pool', [])).map((y) => (y.id === x.id ? fn(y) : y)) }); render(); };
     const flag = (key, checked, fn) => {
@@ -68,6 +76,7 @@ async function render() {
     const h = x.id.slice(4);
     let armed = false;
     const remove = async (e) => {
+      if (e.currentTarget.getAttribute('aria-disabled') === 'true') return; // aria-disabled keeps keyboard focus on the button
       if (armed) {
         await chrome.scripting.unregisterContentScripts({ ids: [x.id] });
         await chrome.permissions.remove({ origins: origins(h) });
@@ -76,14 +85,14 @@ async function render() {
       // FR-08: stopping protection takes a 5 second wait, then a second click.
       const b = e.currentTarget;
       let n = 5;
-      b.disabled = true;
+      b.setAttribute('aria-disabled', 'true');
       b.textContent = t('wait_n', n);
       const tick = setInterval(() => {
         n--;
         if (n > 0) { b.textContent = t('wait_n', n); return; }
         clearInterval(tick);
         armed = true;
-        b.disabled = false;
+        b.removeAttribute('aria-disabled');
         b.textContent = t('rm_final');
       }, 1000);
     };
@@ -92,7 +101,7 @@ async function render() {
   const st = await get('settings', {});
   $('redir').value = st.redirectUrl || '';
   $('tl').querySelector('option[value="3"]').disabled = !st.redirectUrl; // level 3 is opt-in: needs a page you chose
-  renderLock(st);
+  renderLock(await get('lock', null));
   $('count').textContent = `${t('locale_note')} ${(await get('events', [])).length}`;
 }
 
@@ -172,7 +181,7 @@ $('pi').onsubmit = async (e) => {
 
 // FR-17. shortcut: images ride inside the JSON as data URLs, no zip. Add a zip when exports get big.
 $('exp').onclick = async () => {
-  const { lock, snoozeUntil, ...shared } = await get('settings', {}); // never export the lock hash or a snooze
+  const { snoozeUntil, ...shared } = await get('settings', {}); // a snooze is not exported. The lock lives under its own key, so it never is.
   const data = { app: 'she-aint-allat', v: 1, triggers: await get('triggers', []), pool: await get('pool', []), events: await get('events', []), letters: await get('letters', []), reasons: await get('reasons', []), settings: shared };
   const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' })), download: 'she-aint-allat-export.json' });
   a.click();
@@ -221,10 +230,11 @@ $('redirClear').onclick = async () => {
 };
 
 // FR-18: passphrase gate. Not encryption, see lock.js.
-function renderLock(st) {
-  $('lockf').hidden = !!st.lock;
-  $('lockoff').hidden = !st.lock;
-  $('lockstate').textContent = t(st.lock ? 'lock_is_on' : 'lock_is_off');
+function renderLock(lock) {
+  $('lockf').hidden = !!lock;
+  $('lockoff').hidden = !lock;
+  $('lockstate').textContent = t(lock ? 'lock_is_on' : 'lock_is_off');
+  $('lockstate').classList.toggle('on', !!lock);
 }
 $('lockf').onsubmit = async (e) => {
   e.preventDefault();
@@ -232,19 +242,28 @@ $('lockf').onsubmit = async (e) => {
   if (p.length < 8) return say('lock_short');
   const minutes = +$('lm').value;
   const lock = await SAA.lock.make(p, minutes);
-  await set({ settings: { ...(await get('settings', {})), lock } });
+  await set({ lock });
   await chrome.storage.session.set({ unlockedUntil: Date.now() + minutes * 60e3 }); // do not lock yourself out of the page you are on
   $('lp').value = '';
   render();
 };
 $('lockoff').onsubmit = async (e) => {
   e.preventDefault();
-  const { lock, ...rest } = await get('settings', {});
+  const lock = await get('lock', null);
   if (!lock) return;
   if (!(await SAA.lock.verify($('lc').value, lock))) return say('lock_wrong');
-  await set({ settings: rest });
+  await chrome.storage.local.remove('lock');
   $('lc').value = '';
   render();
 };
 
 render();
+
+// Highlight the settings section you are looking at.
+if ('IntersectionObserver' in window) {
+  const links = new Map([...document.querySelectorAll('.side a[href^="#"]')].map((a) => [a.getAttribute('href').slice(1), a]));
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { links.forEach((a) => a.removeAttribute('aria-current')); links.get(e.target.id).setAttribute('aria-current', 'true'); }
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  links.forEach((_, id) => io.observe($(id)));
+}
