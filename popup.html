@@ -1,14 +1,21 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>she aint allat</title>
-<link rel="stylesheet" href="ui.css"><style>body{width:320px}main{padding:16px}h1{font-size:1.5rem;margin:0 0 16px}.row button{flex:1}p{margin:12px 0}</style></head>
+<link rel="stylesheet" href="ui.css"><style>body{width:320px}main{padding:16px}h1{font-size:1.5rem;margin:0 0 16px}.row button{flex:1}p{margin:12px 0}.tile{background:var(--surface-2)}.tile p{margin:0 0 8px}</style></head>
 <body><main>
 <h1 data-i18n="title"></h1>
+<div id="today" class="tile" hidden><p id="todayText"></p><button id="todayDone" data-i18n="today_done"></button></div>
 <div id="shown" role="status" aria-live="polite"></div>
 <div class="row"><button class="primary" id="urge" data-i18n="urge"></button></div>
 <p></p>
 <div class="row"><button id="looked" data-i18n="looked"></button></div>
-<p class="row"><button id="support" data-i18n="support"></button><button id="insights" data-i18n="insights"></button><button id="letters" data-i18n="letters"></button><button id="settings" data-i18n="settings"></button></p>
+<p class="row"><button id="support" data-i18n="support"></button><button id="settings" data-i18n="settings"></button></p>
+<p class="muted"><small data-i18n="snooze_help"></small></p>
+<label><span data-i18n="snooze"></span><select id="snz"><option value="15" data-i18n="sn_15"></option><option value="60" data-i18n="sn_60"></option><option value="480" data-i18n="sn_480"></option></select></label>
+<div class="row"><button id="snzGo" data-i18n="snooze"></button><button id="resume" data-i18n="resume" hidden></button></div>
+<p id="snzState" role="status" aria-live="polite"></p>
+<details><summary data-i18n="more"></summary>
+<p class="row"><button id="insights" data-i18n="insights"></button><button id="letters" data-i18n="letters"></button><button id="reasons" data-i18n="reasons"></button><button id="night" data-i18n="night"></button></p></details>
 <p><small class="muted" data-i18n="disclaimer"></small></p>
 </main>
-<script src="i18n.js"></script><script src="popup.js"></script>
+<script src="i18n.js"></script><script src="lock.js"></script><script src="rules.js"></script><script src="popup.js"></script>
 </body></html>

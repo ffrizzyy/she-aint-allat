@@ -28,6 +28,9 @@ assert.equal(s.days[13].n, 1);
 assert.equal(s.heat[2][21], 2, 'Tuesday 21:00 holds both urges');
 assert.equal(s.days.reduce((a, d) => a + d.n, 0), 2, '30 day old event is outside the 14 day window');
 
+// A snooze is not an urge
+assert.equal(summarize([ev(at(9, 13, 20), 'snoozed')], now).total, 0);
+
 // Top sites: sorted, capped at 5
 s = summarize(['f', 'e', 'd', 'c', 'b', 'a', 'a'].map((d) => ev(at(9, 10, 12), 'went_back', d + '.com')), now);
 assert.equal(s.domains.length, 5);

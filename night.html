@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>she aint allat</title>
+<link rel="stylesheet" href="ui.css"><style>input[type=range]{padding:0}.steps{margin:12px 0 0}</style></head>
+<body><main>
+<h1 data-i18n="night"></h1>
+<p class="muted" data-i18n="night_help"></p>
+
+<section><h2 data-i18n="ns_title"></h2><ul class="steps" id="steps"></ul></section>
+
+<section><h2 data-i18n="snd_title"></h2>
+<div class="grid">
+<label><span data-i18n="snd_vol"></span><input id="vol" type="range" min="0.05" max="0.6" step="0.05" value="0.25"></label>
+<label><span data-i18n="snd_timer"></span><select id="tm"><option value="15" data-i18n="tm_15"></option><option value="30" selected data-i18n="tm_30"></option><option value="60" data-i18n="tm_60"></option></select></label>
+</div>
+<div class="row"><button class="primary" id="brown" data-i18n="snd_brown"></button><button id="rain" data-i18n="snd_rain"></button><button id="stop" data-i18n="snd_off"></button></div>
+<p id="snd" role="status" aria-live="polite"></p></section>
+
+<section><h2 data-i18n="tom_title"></h2>
+<form id="tf"><label><span data-i18n="tom_label"></span><input id="tom" maxlength="200" autocomplete="off" required></label>
+<div class="row"><button class="primary" data-i18n="save"></button><button type="button" id="clear" data-i18n="tom_clear"></button></div></form>
+<p id="tstate" role="status" aria-live="polite"></p></section>
+
+<p><a href="options.html" data-i18n="settings"></a></p>
+<p><small class="muted" data-i18n="disclaimer"></small></p>
+</main>
+<script src="i18n.js"></script><script src="lock.js"></script><script src="night.js"></script>
+</body></html>

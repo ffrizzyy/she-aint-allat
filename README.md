@@ -18,6 +18,8 @@ You keep a list of triggers: a name, nickname, handle, hashtag, place, or a link
 
 The same trigger firing 3 times in 30 minutes moves up one level, never above 2.
 
+Level 3 is opt-in: you pick one page of your own (https only) in Settings, and a trigger set to level 3 sends you there instead of showing a card. It never turns on by itself, and it falls back to level 2 if no page is set or the same tab was just redirected.
+
 On levels 1 and 2 the page blurs the moment a match is found, before the card loads. "Why did this fire?" on the card names the trigger and where it matched (address, title, search box, page text, a link), never the page content.
 
 **Removing a trigger takes 24 hours.** It stays active, then asks you to confirm once more. This is a commitment device so a 1 a.m. decision cannot undo your own list. A trigger added by mistake can be removed at once within 15 minutes.
@@ -40,6 +42,18 @@ Needs Firefox 128 or newer.
 3. Firefox asks for site access one site at a time, the same as Chrome.
 
 Temporary add-ons are removed when Firefox closes. Before you publish it, change the add-on id in `manifest.firefox.json`.
+
+## Everyday controls
+
+- **Snooze** (popup): pause pop-ups for 15 minutes, 1 hour or 8 hours. You wait 5 seconds first. Resuming is instant.
+- **Stopping protection takes a pause too.** Removing a watched site waits 5 seconds and asks twice.
+- **Favorites and a night pool**: mark pop-up items as favorites (they show up 3 times as often) or night only (10 pm to 6 am).
+- **Night mode**: a short wind-down list, soft sleep sounds made on your device (no files, no network) and one small thing for tomorrow that comes back in the popup the next day.
+- **App lock**: an optional passphrase before the popup and settings pages show your lists. It hides things from people nearby. It does not encrypt your data. The support page is never behind it, and "forgot it" erases everything and starts over.
+
+## Try it without installing
+
+Open `demo/index.html`. It runs the same matcher and pop-up logic in a plain web page with no network and no storage. To host it, turn on GitHub Pages for the `main` branch root and open `/demo/`.
 
 ## Insights
 
@@ -69,6 +83,8 @@ The toolbar popup and every level 1 and 2 card have a "Need support?" button. It
 
 - Chrome family is the tested target. The Firefox build is new and only checked by tests, not yet by hand. No Safari build.
 - Only the top frame of each page is watched.
+- No sync between devices. Encrypted sync needs a server and a key design, so it is not built. Use Export and Import to move your data.
+- The app lock is a gate, not encryption.
 - No text recognition inside images or video.
 - A hostile site can probe for your trigger words by watching for the overlay. See the known risk in [SECURITY.md](SECURITY.md).
 - Crisis and helpline sites are never intercepted. The list is short and needs review per country (`matcher.js`, `resources.js`).
@@ -78,7 +94,7 @@ The toolbar popup and every level 1 and 2 card have a "Need support?" button. It
 Plain JavaScript, no build step.
 
 ```
-node matcher.test.js && node rules.test.js && node stats.test.js && node manifest.test.js && node support.test.js
+node matcher.test.js && node rules.test.js && node stats.test.js && node manifest.test.js && node support.test.js && node lock.test.js
 ```
 
 | File | Job |
@@ -93,11 +109,13 @@ node matcher.test.js && node rules.test.js && node stats.test.js && node manifes
 | `options.*`, `popup.*` | Settings page and toolbar popup |
 | `manifest.firefox.json`, `build-firefox.js` | Firefox manifest and the script that builds `dist/firefox` |
 | `support.*`, `resources.js` | Support page and its region data |
+| `lock.js`, `night.*` | App lock, night mode and sleep sounds |
+| `demo/` | Try-it page, no install |
 | `i18n.js` | English and Bahasa Indonesia strings |
 
 ## Status
 
-M1 plus pre-emptive blur, "Why did this fire?", delayed removal, Insights, unsent letters, reality check and a support page. Not on any extension store yet.
+M1 plus pre-emptive blur, "Why did this fire?", delayed removal, Insights, unsent letters, reality check, a support page, snooze, level 3, night pool, night mode, app lock and a demo page. Not on any extension store yet.
 
 ## License
 

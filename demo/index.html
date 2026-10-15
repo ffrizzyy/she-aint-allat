@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; base-uri 'none'; form-action 'none'">
+<title>she aint allat, try it</title>
+<link rel="stylesheet" href="../ui.css"><link rel="stylesheet" href="demo.css"></head>
+<body><main id="page">
+<label class="lang"><span id="l-lang">Language</span><select id="lang"><option value="en">English</option><option value="id">Bahasa Indonesia</option></select></label>
+<h1 id="t-title"></h1>
+<p id="t-intro"></p>
+<p class="muted" id="t-privacy"></p>
+<label><span id="l-words"></span><input id="words" value="Alex, Jordan" maxlength="200" autocomplete="off"></label>
+<fieldset><legend id="l-level"></legend>
+<label class="check"><input type="radio" name="lv" value="0"><span id="lv0"></span></label>
+<label class="check"><input type="radio" name="lv" value="1" checked><span id="lv1"></span></label>
+<label class="check"><input type="radio" name="lv" value="2"><span id="lv2"></span></label>
+</fieldset>
+<label><span id="l-box"></span><input id="box" type="search" autocomplete="off"></label>
+<p class="muted" id="t-hint"></p>
+<p><small class="muted" id="t-disc"></small></p>
+</main>
+<script src="../matcher.js"></script><script src="demo.js"></script>
+</body></html>

@@ -18,7 +18,7 @@
     let total = 0, thisWeek = 0, lastWeek = 0;
 
     for (const e of events) {
-      if (!e || !(e.at > 0) || e.at > now) continue;
+      if (!e || !(e.at > 0) || e.at > now || e.response === 'snoozed') continue; // a snooze is not an urge
       const d = new Date(e.at);
       total++;
       heat[d.getDay()][d.getHours()]++;

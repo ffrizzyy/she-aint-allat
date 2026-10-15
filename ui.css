@@ -24,3 +24,7 @@ li span{overflow-wrap:anywhere}
 .tile img{max-width:100%;border-radius:12px}
 #msg{min-height:1.5em;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.check{display:flex;flex-direction:row;align-items:center;gap:8px;font-weight:400;margin:4px 0 0}.check input{width:24px;min-height:24px}
+li>div:first-child{flex:1;min-width:0}
+button.link{border:0;text-decoration:underline;color:var(--muted);min-height:44px}
+details{margin:12px 0}summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-weight:600}

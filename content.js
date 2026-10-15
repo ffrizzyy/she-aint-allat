@@ -11,7 +11,7 @@
   const SKIP = new Set(['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEMPLATE']);
   const ATTRS = ['alt', 'title', 'aria-label', 'href', 'src'];
   const quiet = new Map(); // triggerId -> ms until quiet (10 min after continue)
-  let m = M.build([]), seen = new WeakSet(), active = false, hostEl = null, rootEl = null, vt = 0, trigs = new Map();
+  let m = M.build([]), seen = new WeakSet(), active = false, hostEl = null, rootEl = null, vt = 0, trigs = new Map(), snoozeUntil = 0;
   const FULL = 'all:initial;position:fixed;inset:0;z-index:2147483647';
 
   const send = (msg) => chrome.runtime.sendMessage(msg).catch(() => {});
@@ -23,6 +23,7 @@
     const s = await chrome.storage.local.get(['triggers', 'settings']);
     m = M.build(s.triggers || []);
     trigs = new Map((s.triggers || []).map((x) => [x.id, x]));
+    snoozeUntil = (s.settings && s.settings.snoozeUntil) || 0;
     if (s.settings && s.settings.locale) SAA.lang = s.settings.locale;
     seen = new WeakSet();
   }
@@ -44,13 +45,21 @@
     active = false;
   }
 
+  // Level 3 (FR-05): replace this page with the user's own page. replace() keeps Back from looping.
+  function go({ eventId, url }) {
+    clearTimeout(vt);
+    send({ type: 'resp', eventId, response: 'redirected' });
+    location.replace(url);
+    setTimeout(unveil, 3000); // if the navigation fails, never leave the page blurred
+  }
+
   // signal: url | title | search | text | attr | link | img. Only the signal name is kept, never page content (FR-22).
   function check(id, signal) {
-    if (!id || active || (quiet.get(id) || 0) > Date.now()) return;
+    if (!id || active || (quiet.get(id) || 0) > Date.now() || snoozeUntil > Date.now()) return;
     active = true;
     if ((trigs.get(id) || {}).level !== 0) veil();
     chrome.runtime.sendMessage({ type: 'hit', triggerId: id, domain: location.hostname })
-      .then((r) => (r && !r.error ? show(id, r, signal) : unveil()))
+      .then((r) => (r && !r.error ? (r.level === 3 ? go(r) : show(id, r, signal)) : unveil()))
       .catch(unveil);
   }
 

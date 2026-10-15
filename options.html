@@ -15,9 +15,13 @@
 <option value="name" data-i18n="k_name"></option><option value="nick" data-i18n="k_nick"></option><option value="handle" data-i18n="k_handle"></option>
 <option value="hashtag" data-i18n="k_hashtag"></option><option value="place" data-i18n="k_place"></option><option value="text" data-i18n="k_text"></option><option value="url" data-i18n="k_url"></option></select></label>
 <label><span data-i18n="sens"></span><select id="ts"><option value="strict" data-i18n="s_strict"></option><option value="normal" selected data-i18n="s_normal"></option><option value="loose" data-i18n="s_loose"></option></select></label>
-<label><span data-i18n="level"></span><select id="tl"><option value="0" data-i18n="l0"></option><option value="1" selected data-i18n="l1"></option><option value="2" data-i18n="l2"></option></select></label>
+<label><span data-i18n="level"></span><select id="tl"><option value="0" data-i18n="l0"></option><option value="1" selected data-i18n="l1"></option><option value="2" data-i18n="l2"></option><option value="3" data-i18n="l3" disabled></option></select></label>
 </div><button class="primary" data-i18n="add"></button></form>
 <ul id="triggers"></ul></section>
+
+<section><h2 data-i18n="h_redirect"></h2><p class="muted" data-i18n="redirect_help"></p>
+<form id="rdf"><label><span data-i18n="redirect_label"></span><input id="redir" type="url" maxlength="500" placeholder="https://" autocomplete="off"></label>
+<div class="row"><button class="primary" data-i18n="save"></button><button type="button" id="redirClear" data-i18n="remove"></button></div></form></section>
 
 <section><h2 data-i18n="h_sites"></h2><p class="muted" data-i18n="sites_help"></p>
 <form id="sf"><label><span data-i18n="site"></span><input id="sv" required autocomplete="off"></label><button class="primary" data-i18n="grant"></button></form>
@@ -29,6 +33,13 @@
 <label><span data-i18n="alt"></span><input id="palt" required maxlength="300" autocomplete="off"></label><button class="primary" data-i18n="add_img"></button></form>
 <ul id="pool"></ul></section>
 
+<section><h2 data-i18n="h_lock"></h2><p class="muted" data-i18n="lock_help"></p>
+<p id="lockstate" role="status"></p>
+<form id="lockf"><label><span data-i18n="lock_new"></span><input id="lp" type="password" autocomplete="new-password"></label>
+<label><span data-i18n="lock_after"></span><select id="lm"><option value="1" data-i18n="m_1"></option><option value="5" selected data-i18n="m_5"></option><option value="15" data-i18n="m_15"></option><option value="60" data-i18n="m_60"></option></select></label>
+<button class="primary" data-i18n="lock_set"></button></form>
+<form id="lockoff" hidden><label><span data-i18n="lock_current"></span><input id="lc" type="password" autocomplete="current-password"></label><button data-i18n="lock_off"></button></form></section>
+
 <section><h2 data-i18n="h_data"></h2><p class="muted" id="count"></p>
 <div class="row"><button id="exp" data-i18n="export"></button><button id="imp" data-i18n="import"></button><button id="wipe" class="danger" data-i18n="del_all"></button></div>
 <input id="ifile" type="file" accept="application/json" hidden></section>
@@ -39,5 +50,5 @@
 <p id="msg" role="status" aria-live="polite"></p>
 <p><small class="muted" data-i18n="disclaimer"></small></p>
 </main>
-<script src="i18n.js"></script><script src="rules.js"></script><script src="options.js"></script>
+<script src="i18n.js"></script><script src="lock.js"></script><script src="rules.js"></script><script src="matcher.js"></script><script src="options.js"></script>
 </body></html>

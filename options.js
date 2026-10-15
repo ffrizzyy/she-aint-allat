@@ -4,7 +4,8 @@ const get = async (k, d) => (await chrome.storage.local.get(k))[k] ?? d;
 const set = (o) => chrome.storage.local.set(o);
 const say = (k) => ($('msg').textContent = t(k));
 const FILES = ['matcher.js', 'i18n.js', 'content.js'];
-const { clean, removalState, canRemoveNow, DELAY } = SAA.rules;
+const { clean, removalState, canRemoveNow, validRedirect, DELAY } = SAA.rules;
+const M = SAA.matcher;
 const origins = (h) => [`*://${h}/*`, `*://*.${h}/*`];
 const apply = () => document.querySelectorAll('[data-i18n]').forEach((e) => (e.textContent = t(e.dataset.i18n)));
 
@@ -48,17 +49,50 @@ async function render() {
   fill($('pool'), pool.map((x) => {
     let c;
     if (x.type === 'image') { c = document.createElement('img'); c.src = x.value; c.alt = x.altText || t('pic'); } else c = span(x.value);
-    return li(c, [['remove', async () => { await set({ pool: (await get('pool', [])).filter((y) => y.id !== x.id) }); render(); }]], x.type === 'image' ? x.altText || t('pic') : x.value);
+    // FR-07: favorites show up more often, night-only items wait for the night hours.
+    const patch = async (fn) => { await set({ pool: (await get('pool', [])).map((y) => (y.id === x.id ? fn(y) : y)) }); render(); };
+    const flag = (key, checked, fn) => {
+      const cb = Object.assign(document.createElement('input'), { type: 'checkbox', checked });
+      cb.onchange = () => patch((y) => fn(y, cb.checked));
+      const l = document.createElement('label');
+      l.className = 'check';
+      l.append(cb, document.createTextNode(t(key)));
+      return l;
+    };
+    const box = document.createElement('div');
+    box.append(c, flag('fav', !!x.favorite, (y, v) => ({ ...y, favorite: v })), flag('night_only', x.pool === 'night', (y, v) => ({ ...y, pool: v ? 'night' : 'day' })));
+    return li(box, [['remove', async () => { await set({ pool: (await get('pool', [])).filter((y) => y.id !== x.id) }); render(); }]], x.type === 'image' ? x.altText || t('pic') : x.value);
   }));
   const scripts = (await chrome.scripting.getRegisteredContentScripts()).filter((x) => x.id.startsWith('saa-'));
   fill($('sites'), scripts.map((x) => {
     const h = x.id.slice(4);
-    return li(span(h), [['remove', async () => {
-      await chrome.scripting.unregisterContentScripts({ ids: [x.id] });
-      await chrome.permissions.remove({ origins: origins(h) });
-      render();
-    }]], h);
+    let armed = false;
+    const remove = async (e) => {
+      if (armed) {
+        await chrome.scripting.unregisterContentScripts({ ids: [x.id] });
+        await chrome.permissions.remove({ origins: origins(h) });
+        return render();
+      }
+      // FR-08: stopping protection takes a 5 second wait, then a second click.
+      const b = e.currentTarget;
+      let n = 5;
+      b.disabled = true;
+      b.textContent = t('wait_n', n);
+      const tick = setInterval(() => {
+        n--;
+        if (n > 0) { b.textContent = t('wait_n', n); return; }
+        clearInterval(tick);
+        armed = true;
+        b.disabled = false;
+        b.textContent = t('rm_final');
+      }, 1000);
+    };
+    return li(span(h), [['remove', remove]], h);
   }));
+  const st = await get('settings', {});
+  $('redir').value = st.redirectUrl || '';
+  $('tl').querySelector('option[value="3"]').disabled = !st.redirectUrl; // level 3 is opt-in: needs a page you chose
+  renderLock(st);
   $('count').textContent = `${t('locale_note')} ${(await get('events', [])).length}`;
 }
 
@@ -138,7 +172,8 @@ $('pi').onsubmit = async (e) => {
 
 // FR-17. shortcut: images ride inside the JSON as data URLs, no zip. Add a zip when exports get big.
 $('exp').onclick = async () => {
-  const data = { app: 'she-aint-allat', v: 1, triggers: await get('triggers', []), pool: await get('pool', []), events: await get('events', []), letters: await get('letters', []), reasons: await get('reasons', []), settings: await get('settings', {}) };
+  const { lock, snoozeUntil, ...shared } = await get('settings', {}); // never export the lock hash or a snooze
+  const data = { app: 'she-aint-allat', v: 1, triggers: await get('triggers', []), pool: await get('pool', []), events: await get('events', []), letters: await get('letters', []), reasons: await get('reasons', []), settings: shared };
   const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([JSON.stringify(data)], { type: 'application/json' })), download: 'she-aint-allat-export.json' });
   a.click();
   URL.revokeObjectURL(a.href);
@@ -162,10 +197,53 @@ $('ifile').onchange = async () => {
 
 $('wipe').onclick = async () => {
   if (!confirm(t('del_confirm'))) return;
-  await chrome.storage.local.clear();
-  const ids = (await chrome.scripting.getRegisteredContentScripts()).filter((x) => x.id.startsWith('saa-')).map((x) => x.id);
-  if (ids.length) await chrome.scripting.unregisterContentScripts({ ids });
-  await chrome.permissions.remove({ origins: (await chrome.permissions.getAll()).origins || [] }).catch(() => {});
+  await SAA.lock.wipe();
+  render();
+};
+
+// FR-05: level 3 target. It must be https and must not match one of your own triggers, or it would send you in circles.
+$('rdf').onsubmit = async (e) => {
+  e.preventDefault();
+  const u = validRedirect($('redir').value);
+  if (!u) return say('redirect_bad');
+  let dec = u;
+  try { dec = decodeURIComponent(u); } catch { /* keep raw */ }
+  const m = M.build(await get('triggers', []));
+  if (M.scanUrl(m, u) || M.scan(m, dec, { compact: true })) return say('redirect_loop');
+  await set({ settings: { ...(await get('settings', {})), redirectUrl: u } });
+  say('redirect_saved');
+  render();
+};
+$('redirClear').onclick = async () => {
+  const { redirectUrl, ...rest } = await get('settings', {});
+  await set({ settings: rest });
+  render();
+};
+
+// FR-18: passphrase gate. Not encryption, see lock.js.
+function renderLock(st) {
+  $('lockf').hidden = !!st.lock;
+  $('lockoff').hidden = !st.lock;
+  $('lockstate').textContent = t(st.lock ? 'lock_is_on' : 'lock_is_off');
+}
+$('lockf').onsubmit = async (e) => {
+  e.preventDefault();
+  const p = $('lp').value;
+  if (p.length < 8) return say('lock_short');
+  const minutes = +$('lm').value;
+  const lock = await SAA.lock.make(p, minutes);
+  await set({ settings: { ...(await get('settings', {})), lock } });
+  await chrome.storage.session.set({ unlockedUntil: Date.now() + minutes * 60e3 }); // do not lock yourself out of the page you are on
+  $('lp').value = '';
+  render();
+};
+$('lockoff').onsubmit = async (e) => {
+  e.preventDefault();
+  const { lock, ...rest } = await get('settings', {});
+  if (!lock) return;
+  if (!(await SAA.lock.verify($('lc').value, lock))) return say('lock_wrong');
+  await set({ settings: rest });
+  $('lc').value = '';
   render();
 };
 

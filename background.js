@@ -16,12 +16,13 @@ chrome.runtime.onMessage.addListener((msg, sender, reply) => {
   return true;
 });
 
+// FR-07: night pool by local hour, favorites weighted, no immediate repeat.
 async function pick() {
-  const pool = SAA.rules.withReasons(await get('pool', []), await get('reasons', []));
-  if (!pool.length) return { type: 'text', value: null };
+  const { rules } = SAA;
+  const pool = rules.poolFor(rules.withReasons(await get('pool', []), await get('reasons', [])), new Date().getHours());
   const { last } = await chrome.storage.session.get('last');
-  const options = pool.length > 1 ? pool.filter((p) => p.id !== last) : pool; // no immediate repeat
-  const p = options[Math.floor(Math.random() * options.length)];
+  const p = rules.choose(pool, last, Math.random);
+  if (!p) return { type: 'text', value: null };
   await chrome.storage.session.set({ last: p.id });
   return p;
 }
@@ -45,14 +46,23 @@ async function handle(msg, sender) {
     const triggers = await get('triggers', []);
     const trig = triggers.find((t) => t.id === msg.triggerId);
     if (!trig) return null;
+    const settings = await get('settings', {});
+    if ((settings.snoozeUntil || 0) > Date.now()) return null; // FR-08: snoozed, the content script also checks
     const { fires = {} } = await chrome.storage.session.get('fires');
     const now = Date.now();
-    const level = SAA.rules.level(trig.level, fires[trig.id] || [], now);
+    let level = SAA.rules.level(trig.level, fires[trig.id] || [], now), url;
     fires[trig.id] = [...(fires[trig.id] || []).filter((x) => x > now - SAA.rules.WINDOW), now];
     await chrome.storage.session.set({ fires });
+    if (level === 3) { // FR-05: opt-in redirect. Falls back to level 2 without a valid target, or if this tab was redirected in the last 30 s (no loops).
+      const { redirected = {} } = await chrome.storage.session.get('redirected');
+      const tab = sender.tab && sender.tab.id;
+      const target = SAA.rules.validRedirect(settings.redirectUrl || '');
+      if (!target || redirected[tab] > now - 30e3) level = 2;
+      else { url = target; redirected[tab] = now; await chrome.storage.session.set({ redirected }); }
+    }
     const id = crypto.randomUUID();
     await logEvent({ id, at: Date.now(), domain: msg.domain, triggerId: trig.id, level, response: null }); // never URL, query or text
-    return { eventId: id, level, item: await pick() };
+    return { eventId: id, level, url, item: level === 3 ? null : await pick() };
   }
   if (msg.type === 'resp') {
     await locked(async () => {

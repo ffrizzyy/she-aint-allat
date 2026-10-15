@@ -1,6 +1,6 @@
 // Run: node rules.test.js
 const assert = require('node:assert');
-const { level, clean, removalState, canRemoveNow, letterState, withReasons, move, REASON_MAX, REASONS_CAP, DELAYS, LETTER_MAX, LETTERS_CAP, DELAY, GRACE } = require('./rules.js');
+const { level, clean, removalState, canRemoveNow, letterState, withReasons, move, isNight, poolFor, choose, validRedirect, tomorrowDue, SNOOZE_MINUTES, REASON_MAX, REASONS_CAP, DELAYS, LETTER_MAX, LETTERS_CAP, DELAY, GRACE } = require('./rules.js');
 
 // Ladder
 const now = 1e9, min = 60e3;
@@ -84,4 +84,38 @@ assert.equal(c.reasons.length, 2);
 assert.equal(c.reasons[0].inPool, true);
 assert.equal(c.reasons[1].text.length, REASON_MAX);
 assert.equal(clean({ ...ok, reasons: Array.from({ length: 80 }, () => ({ text: 'a' })) }).reasons.length, REASONS_CAP);
+// FR-05: level 3 is opt-in and never reached by escalation
+assert.equal(level(3, [], now), 3);
+assert.equal(level(3, [now - min, now - 2 * min], now), 3);
+assert.equal(level(2, [now - min, now - 2 * min], now), 2, 'auto escalation still stops at 2');
+assert.equal(clean({ ...ok, triggers: [{ value: 'a', level: 3 }] }).triggers[0].level, 3);
+assert.equal(clean({ ...ok, triggers: [{ value: 'a', level: 4 }] }).triggers[0].level, 1);
+assert.equal(clean({ ...ok, events: [{ level: 3, response: 'redirected' }, { response: 'snoozed' }] }).events[0].response, 'redirected');
+assert.equal(clean({ ...ok, events: [{ response: 'snoozed' }] }).events[0].response, 'snoozed');
+assert.equal(validRedirect('https://example.com/my-page'), 'https://example.com/my-page');
+for (const bad of ['http://example.com', 'javascript:alert(1)', 'https://user:pw@example.com', 'https://localhost', 'nope', '', 'https://example.com/' + 'a'.repeat(600)]) assert.equal(validRedirect(bad), null, bad);
+
+// FR-07: night pool, favorites, no repeats
+assert([22, 23, 0, 5].every(isNight) && [6, 12, 21].every((h) => !isNight(h)));
+const P = [{ id: 'd1' }, { id: 'd2', pool: 'day' }, { id: 'n1', pool: 'night' }];
+assert.deepEqual(poolFor(P, 12).map((x) => x.id), ['d1', 'd2'], 'night items stay out of the day');
+assert.deepEqual(poolFor(P, 23).map((x) => x.id), ['n1'], 'night uses night items when there are any');
+assert.deepEqual(poolFor([{ id: 'd1' }], 23).map((x) => x.id), ['d1'], 'no night items, day items are used');
+assert.deepEqual(poolFor([{ id: 'n1', pool: 'night' }], 12).map((x) => x.id), ['n1'], 'only night items, still something to show');
+assert.equal(choose([], null, () => 0), null);
+assert.equal(choose([{ id: 'a' }], 'a', () => 0).id, 'a', 'single item may repeat');
+const trio = [{ id: 'a' }, { id: 'b' }, { id: 'c' }];
+for (let i = 0; i < 50; i++) assert.notEqual(choose(trio, 'b', Math.random).id, 'b', 'never the same twice');
+const fav = [{ id: 'a' }, { id: 'b', favorite: true }]; // weights 1 and 3
+assert.equal(choose(fav, null, () => 0).id, 'a');
+assert.equal(choose(fav, null, () => 0.24).id, 'a');
+assert.equal(choose(fav, null, () => 0.26).id, 'b', 'favorite owns 75 percent of the range');
+assert.equal(choose(fav, null, () => 0.999).id, 'b');
+assert.deepEqual(SNOOZE_MINUTES, [15, 60, 480]);
+// FR-14: tomorrow note comes back the next day
+const lt = (d, h) => new Date(2026, 9, d, h).getTime();
+assert.equal(tomorrowDue({ at: lt(12, 23) }, lt(13, 8)), true, 'written last night');
+assert.equal(tomorrowDue({ at: lt(13, 1) }, lt(13, 8)), false, 'written after midnight today');
+assert.equal(tomorrowDue({ at: lt(13, 7) }, lt(13, 22)), false);
+assert.equal(tomorrowDue({ at: lt(1, 9) }, lt(13, 8)), true, 'still due days later');
 console.log('rules ok');
