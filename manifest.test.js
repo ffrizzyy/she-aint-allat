@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const c = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
 const f = JSON.parse(fs.readFileSync('manifest.firefox.json', 'utf8'));
 
-for (const k of ['manifest_version', 'name', 'version', 'permissions', 'optional_host_permissions', 'action', 'options_ui', 'content_security_policy', 'incognito']) {
+for (const k of ['manifest_version', 'name', 'version', 'permissions', 'optional_host_permissions', 'action', 'options_ui', 'content_security_policy', 'incognito', 'icons']) {
   assert.deepEqual(f[k], c[k], `${k} differs between manifests`);
 }
 assert.equal(c.background.service_worker, 'background.js');
@@ -14,6 +14,10 @@ assert(f.browser_specific_settings.gecko.id, 'Firefox needs an add-on id');
 
 // Every file a manifest names exists.
 for (const p of [c.action.default_popup, c.options_ui.page, c.background.service_worker, ...f.background.scripts]) assert(fs.existsSync(p), `missing ${p}`);
+
+// Icons named by either manifest exist (store review rejects a missing icon).
+for (const p of [...Object.values(c.icons), ...Object.values(c.action.default_icon)]) assert(fs.existsSync(p), `missing ${p}`);
+assert(c.icons['128'], 'stores need a 128 px icon');
 
 // Files that options.js injects into pages exist.
 const list = fs.readFileSync('options.js', 'utf8').match(/const FILES = \[(.*?)\]/)[1].match(/'([^']+)'/g).map((s) => s.slice(1, -1));

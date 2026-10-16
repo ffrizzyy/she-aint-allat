@@ -37,7 +37,7 @@ Needs Chrome, Edge or Brave 120 or newer. For Firefox see below.
 
 Needs Firefox 128 or newer.
 
-1. Run `node build-firefox.js`. It writes `dist/firefox`.
+1. Run `node build.js`. It writes `dist/firefox`.
 2. Open `about:debugging`, choose **This Firefox**, then **Load Temporary Add-on**, and pick `dist/firefox/manifest.json`.
 3. Firefox asks for site access one site at a time, the same as Chrome.
 
@@ -73,6 +73,8 @@ The toolbar popup and every level 1 and 2 card have a "Need support?" button. It
 
 ## Privacy
 
+The full policy is in [PRIVACY.md](PRIVACY.md).
+
 - Matching happens in memory on your device. Page content, URLs and search text are never stored.
 - The event log keeps only time, domain, level and your response.
 - No network requests. No analytics. No remote config.
@@ -107,7 +109,8 @@ node matcher.test.js && node rules.test.js && node stats.test.js && node manifes
 | `content.js` | Watches the page, draws the overlay |
 | `background.js` | Picks pool items, writes the event log |
 | `options.*`, `popup.*` | Settings page and toolbar popup |
-| `manifest.firefox.json`, `build-firefox.js` | Firefox manifest and the script that builds `dist/firefox` |
+| `manifest.firefox.json`, `build.js` | Firefox manifest and the script that builds `dist/chrome`, `dist/firefox` and the store zips |
+| `icons/`, `PRIVACY.md`, `store/` | Store icons, privacy policy, store listings and the publishing guide |
 | `support.*`, `resources.js` | Support page and its region data |
 | `lock.js`, `night.*` | App lock, night mode and sleep sounds |
 | `demo/` | Try-it page, no install |
